@@ -1,0 +1,11 @@
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize({
+  database: 'ujiandb', // Ganti dengan nama database Anda
+  username: 'root', // Ganti dengan nama pengguna database Anda
+  password: null, // Ganti dengan kata sandi database Anda
+  host: 'localhost', // Ganti dengan host database Anda (misalnya, localhost)
+  dialect: 'mysql', // Jenis database (MySQL, PostgreSQL, dll.)
+});
+
+module.exports = sequelize;
