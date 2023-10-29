@@ -1,0 +1,54 @@
+/* Styling untuk Navbar dan Sidebar */
+body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .navbar-toggler {
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .sidebar {
+    text-align: left;
+    width: 50px;
+    height: 100vh;
+    background:var(--main-gradient-rotate);
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: 0.3s;
+  }
+  .sidebar h1{
+    transition: 0.3s;
+  }
+  .sidebar h5{
+    transition: 0.3s;   
+  }
+  .sidebar i{
+    scale: 1.5;
+  }
+  .sidebar.open h5{
+    margin-left: 20px;
+  }
+  .sidebar.open {
+    width: 300px;
+  }
+  .sidebar .menu-item{
+    background-color: transparent;
+    transition: 0.3s;   
+  }
+  .sidebar.open .menu-item:hover{
+    background-color: rgba(243, 243, 243, 0.178);
+  }

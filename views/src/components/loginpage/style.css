@@ -1,0 +1,53 @@
+.form-shape{
+    height: 100vh;
+}
+:root{
+    --main-gradient : linear-gradient(to right, rgb(0, 108, 196), #153ec5);
+    --main-gradient-rotate : linear-gradient(180deg, rgb(0, 108, 196), #153ec5);
+}
+button, input{
+    border-radius: 0 !important;
+}
+button, input:focus{
+    outline: none !important;
+}
+button{
+    border:none !important;
+}
+.gradient1{
+background: var(--main-gradient);
+}
+input{
+    border: none;
+}
+.half-screen-overlay {
+    width: 50%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    transition: transform 0.3s;
+    z-index: 999;
+  }
+  
+  .half-screen-overlay.shifted {
+    transform: translateX(100%);
+  }
+  
+body{
+    overflow: hidden;
+}
+.form-box{
+    width: 50%;
+}
+@media (max-width:768px){
+    .form-box{
+        width: 100%;
+    }
+}
+.toggle-login{
+    position: absolute;
+}
+.switch-login{
+    color: rgb(66, 0, 57);
+    cursor: pointer;
+}
