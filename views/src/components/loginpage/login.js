@@ -21,7 +21,7 @@ function LoginComponent(){
           <form>
           <Input name="Username" type="text" icon='user'/>
           <Input name="Password" type="password" icon='lock'/>
-              <button type="submit" className="btn text-white shadow-sm mt-5 w-100 p-3 rounded-pill gradient1" formAction='#' formMethod='get'>Login</button>
+              <button type="submit" className="btn text-white shadow-sm mt-5 w-100 p-3 rounded-pill gradient1" formAction='/' formMethod='get'>Login</button>
             </form>
         </div>
       </div>

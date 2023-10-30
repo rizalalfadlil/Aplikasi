@@ -17,6 +17,9 @@ button{
 .gradient1{
 background: var(--main-gradient);
 }
+.text-gradient1{
+    color: var(--main-gradient);
+}
 input{
     border: none;
 }

@@ -25,12 +25,13 @@ body {
     width: 50px;
     height: 100vh;
     background:var(--main-gradient-rotate);
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     transition: 0.3s;
+    z-index: 5;
   }
-  .sidebar h1{
+  .sidebar div{
     transition: 0.3s;
   }
   .sidebar h5{
@@ -45,10 +46,32 @@ body {
   .sidebar.open {
     width: 300px;
   }
+  @media (max-width:768px) {
+    .sidebar.open{
+      width: 100%;
+    }
+  }
   .sidebar .menu-item{
     background-color: transparent;
     transition: 0.3s;   
   }
   .sidebar.open .menu-item:hover{
     background-color: rgba(243, 243, 243, 0.178);
+  }
+  .search-icon{
+    margin: 10px;
+  }
+  .edit-button{
+    transition: 0.3s;
+    scale: 1.5;
+    color: blue;
+  }
+  .edit-button:hover{
+    color: rgb(189, 189, 189);
+  }
+  .larger-icon{
+    scale: 1.5;
+  }
+  .animated{
+    transition: 0.3s;
   }
