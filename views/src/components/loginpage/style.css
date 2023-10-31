@@ -29,7 +29,7 @@ input{
     position: fixed;
     top: 0;
     transition: transform 0.3s;
-    z-index: 999;
+    z-index: 10;
   }
   
   .half-screen-overlay.shifted {
@@ -37,7 +37,7 @@ input{
   }
   
 body{
-    overflow: hidden;
+    
 }
 .form-box{
     width: 50%;

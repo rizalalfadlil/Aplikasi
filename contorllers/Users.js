@@ -1,4 +1,5 @@
 const { User } = require('../models'); // Pastikan Anda mengimpor model Users
+const jwt = require('jsonwebtoken');
 
 // Operasi Create (C)
 async function createUser(req, res) {
@@ -65,10 +66,37 @@ async function deleteUser(req, res) {
     res.status(500).json({ error: 'Gagal menghapus pengguna.' });
   }
 }
+// Operasi Login
+async function login(req, res) {
+  const { username, password } = req.body;
+
+  try {
+    // Cari pengguna berdasarkan username
+    const user = await User.findOne({ where: { username } });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Username tidak ditemukan.' });
+    }
+
+    // Verifikasi kata sandi
+    if (user.password !== password) {
+      return res.status(401).json({ error: 'Kata sandi tidak sesuai.' });
+    }
+
+    // Jika autentikasi berhasil, Anda bisa menghasilkan token otentikasi
+    const token = jwt.sign({ username: user.username }, 'rahasia-kunci', { expiresIn: '1h' });
+
+    res.json({ message: 'Login berhasil', token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Gagal melakukan login.' });
+  }
+}
 
 module.exports = {
   createUser,
   getUsers,
   updateUser,
   deleteUser,
+  login,
 };

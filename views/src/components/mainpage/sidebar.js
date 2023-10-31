@@ -4,7 +4,7 @@ import 'font-awesome/css/font-awesome.min.css';
 function Sidebar({ isOpen, toggleSidebar }) {
   return (
     <div onClick={toggleSidebar}u className={`d-md-block text-light sidebar ${isOpen ? 'open' : 'd-none d-md-block'}`}>
-      <button className="navbar-toggler m-3">
+      <button className="navbar-toggler m-3" oc>
         ☰
       </button>
       <div className='pt-4'>
@@ -15,6 +15,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
         <div className='list-group mt-5 bg-transparent text-center w-100 pt-5 p-2'>
           <SideMenu isOpen={isOpen} icon="user" title="Menu 1"/>
           <SideMenu isOpen={isOpen} icon="bars" title="Menu 2"/>
+          <SideMenu isOpen={isOpen} icon='sign-out' title='Log-out' link='login'/>
         </div>
       </div>
     </div>
@@ -23,7 +24,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
 function SideMenu(props){
 
   return(
-    <button type="button" className={`list-group-item pt-3 rounded-pill text-light justify-content-center menu-item list-group-item-action d-flex`}><i className={`fa fa-${props.icon} ${props.isOpen?'':'show-icon'}`}/><h5 className={`text-nowrap overflow-hidden opacity-${props.isOpen?'100':'0'}`}>{props.title}</h5></button>
+    <a type="button" href={props.link} className={`list-group-item pt-3 border-0 align-items-center rounded-pill text-light justify-content-center menu-item list-group-item-action d-flex`}><i className={`fa fa-${props.icon} ${props.isOpen?'':'show-icon'}`}/><h5 className={`text-nowrap mt-2 overflow-hidden opacity-${props.isOpen?'100':'0'}`}>{props.title}</h5></a>
   )
 }
 export default Sidebar;

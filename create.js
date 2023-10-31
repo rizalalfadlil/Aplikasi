@@ -1,8 +1,8 @@
 const User = require('./models/Users.js'); // Sesuaikan dengan lokasi model Anda
 
 User.create({
-    username: 'nama_penggudwna',
-    password: 'kata_sandi',
+    username: 'username',
+    password: 'password',
     role: 'Siswa',
     class: 'Kelas X',
     department: 'Jurusan IPA',

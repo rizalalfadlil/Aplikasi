@@ -10,10 +10,6 @@ const ExamSession = sequelize.define('ExamSession', {
     type: DataTypes.DATE,
     allowNull: false,
   },
-  duration: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   shuffleQuestions: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
@@ -24,10 +20,6 @@ const ExamSession = sequelize.define('ExamSession', {
   },
   submissionDeadline: {
     type: DataTypes.DATE,
-    allowNull: false,
-  },
-  choiceCount: {
-    type: DataTypes.INTEGER,
     allowNull: false,
   },
 });

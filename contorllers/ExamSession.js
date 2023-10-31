@@ -3,8 +3,8 @@ const { ExamSession } = require('../models'); // Pastikan Anda mengimpor model E
 // Operasi Create (C)
 async function createExamSession(req, res) {
   try {
-    const { name, startTime, duration, shuffleQuestions, strictMode, submissionDeadline, choiceCount } = req.body;
-    const newSession = await ExamSession.create({ name, startTime, duration, shuffleQuestions, strictMode, submissionDeadline, choiceCount });
+    const { name, startTime,  shuffleQuestions, strictMode, submissionDeadline, } = req.body;
+    const newSession = await ExamSession.create({ name, startTime,  shuffleQuestions, strictMode, submissionDeadline, });
     res.status(201).json(newSession);
   } catch (error) {
     console.error(error);
@@ -26,7 +26,7 @@ async function getExamSessions(req, res) {
 // Operasi Update (U)
 async function updateExamSession(req, res) {
   const sessionId = req.params.id;
-  const { name, startTime, duration, shuffleQuestions, strictMode, submissionDeadline, choiceCount } = req.body;
+  const { name, startTime, shuffleQuestions, strictMode, submissionDeadline, } = req.body;
 
   try {
     const session = await ExamSession.findByPk(sessionId);
@@ -36,11 +36,9 @@ async function updateExamSession(req, res) {
 
     session.name = name;
     session.startTime = startTime;
-    session.duration = duration;
     session.shuffleQuestions = shuffleQuestions;
     session.strictMode = strictMode;
     session.submissionDeadline = submissionDeadline;
-    session.choiceCount = choiceCount;
 
     await session.save();
     res.json(session);
