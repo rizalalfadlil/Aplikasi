@@ -2,6 +2,7 @@
 body {
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
   }
   
   .navbar {
@@ -74,4 +75,7 @@ body {
   }
   .animated{
     transition: 0.3s;
+  }
+  .h100vh{
+    height: 100vh;
   }

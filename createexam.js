@@ -8,14 +8,14 @@ const ExamSession = require('./models/ExamSessions'); // Sesuaikan dengan path y
     // Menambahkan data ke model ExamSession
     const examSessionData = [
       {
-        name: 'Ujian Akhir Semester',
+        name: 'Ini Judul',
         startTime: new Date('2023-11-01T08:00:00'), // Sesuaikan dengan waktu yang diinginkan
         shuffleQuestions: true,
         strictMode: true,
         submissionDeadline: new Date('2023-11-01T10:00:00'), // Sesuaikan dengan waktu yang diinginkan
       },
       {
-        name: 'Ujian Tes 2',
+        name: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         startTime: new Date('2023-11-02T09:00:00'), // Sesuaikan dengan waktu yang diinginkan
         shuffleQuestions: false,
         strictMode: false,

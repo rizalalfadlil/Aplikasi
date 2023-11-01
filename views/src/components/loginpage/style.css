@@ -3,6 +3,7 @@
 }
 :root{
     --main-gradient : linear-gradient(to right, rgb(0, 108, 196), #153ec5);
+    --gradient2 : linear-gradient(180deg, rgb(0, 55, 100), #3a519b);
     --main-gradient-rotate : linear-gradient(180deg, rgb(0, 108, 196), #153ec5);
 }
 button, input{
@@ -16,6 +17,9 @@ button{
 }
 .gradient1{
 background: var(--main-gradient);
+}
+.gradient2{
+ background: var(--gradient2);
 }
 .text-gradient1{
     color: var(--main-gradient);
