@@ -1,0 +1,28 @@
+.rsidebar{
+    z-index: 5;
+}
+input[type='radio']:checked .answer-button{
+    background-color: rgb(236, 236, 236) !important;
+    color: blue !important;
+}
+.list-soal::-webkit-scrollbar{
+    background: none;
+    position: relative;
+}
+.soal:hover{
+ background-color: #00000036;
+ transition: 0.3s;
+}
+.answer-image{
+    width: 90%;
+    z-index: 5;
+    position: relative;
+    background:none;
+}
+.list-soal::-webkit-scrollbar-thumb{
+    background-color: rgba(165, 165, 165, 0.555);
+    border-radius: 50px;
+    padding: 20px;
+    z-index: 1;
+    overflow: hidden;
+}

@@ -54,7 +54,7 @@ export function InsertSesiUjian(props){
               {isEdited?
               (
               <>
-              <li><input className='bg-light w-100 p-2 border-bottom' value={editedJudul} onChange={(e) => setEditedJudul(e.target.value)} /></li>
+              <li><input className='bg-light w-100 p-2 border-bottom' placeholder="Judul" value={editedJudul} onChange={(e) => setEditedJudul(e.target.value)} /></li>
               <li className='pt-2 pb-2 row w-50'>
               <span className='col'>Mode Ketat</span>
               <Switch className='rounded-pill col-1' checked={editedStrictMode} onChange={(checked) => setEditedStrictMode(checked)} />
@@ -81,7 +81,10 @@ export function InsertSesiUjian(props){
             <div className='col justify-content-end d-flex'>
             <div className='align-items-end w-10 btn-group-vertical'>
             {isEdited?
-            (<button type="button" onClick={handleUpdate} className="btn fa fa-check edit-button"/>)
+            (<>
+            <button type="button" onClick={handleUpdate} className="btn fa fa-check edit-button"/>
+            <button type="button" onClick={toggleEdit} className="btn fa fa-times edit-button"/>
+            </>)
             :(<button type="button" onClick={toggleEdit} className="btn btn-primary badge rounded-pill">Tambah Data <i className="fa fa-plus p-2"/></button>)}
             </div>
             </div>

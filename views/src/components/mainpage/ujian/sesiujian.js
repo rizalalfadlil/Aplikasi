@@ -97,7 +97,7 @@ export function SesiUjian(props){
             <div className='col justify-content-end d-flex'>
             <div className='align-items-end w-10 btn-group-vertical'>
             <button className={`btn fa fa-${isEdited ? 'check' : 'pencil'} rounded-pill edit-button`} onClick={isEdited ? handleUpdate : toggleEdit} />
-            <button className='btn fa fa-trash rounded-pill edit-button' onClick={deleteExamSession}/>
+            <button className={`btn fa fa-${isEdited?'times':'trash'} rounded-pill edit-button`} onClick={isEdited?toggleEdit : deleteExamSession}/>
             </div>
             </div>
             {isEdited?
