@@ -1,5 +1,6 @@
 .rsidebar{
     z-index: 5;
+    right: 0;
 }
 input[type='radio']:checked .answer-button{
     background-color: rgb(236, 236, 236) !important;
@@ -25,4 +26,7 @@ input[type='radio']:checked .answer-button{
     padding: 20px;
     z-index: 1;
     overflow: hidden;
+}
+.ant-steps-item-title, .ant-steps-icon{
+    color: white !important;
 }

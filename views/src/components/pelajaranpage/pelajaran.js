@@ -3,10 +3,24 @@ import { Image } from "antd";
 import Sidebar from "../mainpage/sidebar";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
+import {Steps} from "antd";
 import './style.css'
 import { FontSizeChanger } from "./fontSizeChanger";
+const { Step } = Steps;
 export function HalamanUjian(){
   const [fontSize, setFontSize] = useState(5);
+  const [current, setCurrent] = useState(0);
+  const next = () => {
+    setCurrent(current + 1);
+  };
+
+  const prev = () => {
+    setCurrent(current - 1);
+  };
+  const onChange = (value) => {
+    console.log('onChange:', value);
+    setCurrent(value);
+  };
 
   const handleFontSizeChange = (event) => {
     const selectedFontSize = parseInt(event.target.value);
@@ -18,7 +32,7 @@ export function HalamanUjian(){
           <div className="d-flex align-items-center text-end justify-content-end">
           <div className="row w-100 ">
             <div className="col p-5">
-              <div className="border p-5 text-start rounded-5 text-bg-light">
+              <div className="border p-5 text-start rounded-5 text-bg-light ">
                 <div className='fs-5'><span className="p-2">Nama Pelajaran</span> | <span className="p-2">01</span></div>
                 <hr className="mt-4 mb-4"/>
               <p className={`pt-3 pb-3 fs-`+fontSize}>
@@ -32,35 +46,40 @@ export function HalamanUjian(){
               </div>
               <hr className="mt-5"/>
               <div className="row mt-4 p-2">
-                <button className="btn btn-primary p-2 rounded-pill col-2"><i className="fa fa-arrow-left p-2"/>kembali</button>
+                <button className="btn btn-primary p-2 rounded-pill col-2" onClick={prev}><i className="fa fa-arrow-left p-2"/>kembali</button>
                 <div className="col"></div>
-                <button className="btn btn-primary p-2 rounded-pill col-2">Selanjutnya<i className="fa fa-arrow-right p-2"/></button>
+                <button className="btn btn-primary p-2 rounded-pill col-2" onClick={next}>Selanjutnya<i className="fa fa-arrow-right p-2"/></button>
               </div>
               </div>
             </div>
             <div className="col-2 gradient2 text-light text-center h100vh rsidebar">
             <h5 className="p-4 mt-5">A list</h5>
             <FontSizeChanger fontSize={fontSize} handleFontSizeChange={handleFontSizeChange}/>
-            <ul type="none" className="p-3 mt-5 overflow-y-scroll h-50 rounded-5 list-soal ">
+            <div className="p-3 mt-5 overflow-y-scroll text-light h-50 rounded-5 list-soal ">
+            <Steps
+            current={current}
+            onChange={onChange}
+            direction='vertical'
+            className="p-4"
+            >
+              <Step title="Langkah 1" />
+              <Step title="Langkah 2"/>
+              <Step title="Langkah 3" />
+              <Step title="Langkah 1" />
+              <Step title="Langkah 2"/>
+              <Step title="Langkah 3" />
+              <Step title="Langkah 1" />
+              <Step title="Langkah 2"/>
+              <Step title="Langkah 3" />
+              <Step title="Langkah 1" />
+              <Step title="Langkah 2"/>
+              <Step title="Langkah 3" />
+              <Step title="Langkah 1" />
+              <Step title="Langkah 2"/>
+              <Step title="Langkah 3" />
               <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-              <Soal/>
-            </ul>
+            </Steps>
+            </div>
             </div>
           </div>
           </div>
@@ -68,7 +87,7 @@ export function HalamanUjian(){
     )
 }
 function Soal(){
-  return (<li className={`fs-5 soal rounded-pill mt-2 p-2`}>ini soal</li>)
+  return (<Step title='Langkah 1'/>)
 }
 
 function AnswerOption(props) {
