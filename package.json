@@ -18,6 +18,8 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.6.2",
     "react-bootstrap": "^2.9.1",
+    "react-quill": "^2.0.0",
+    "react-quill-image-uploader": "^0.1.1",
     "sequelize": "^6.33.0",
     "sequelize-cli": "^6.6.1"
   }

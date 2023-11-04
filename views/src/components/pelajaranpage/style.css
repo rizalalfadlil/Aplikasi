@@ -27,6 +27,22 @@ input[type='radio']:checked .answer-button{
     z-index: 1;
     overflow: hidden;
 }
-.ant-steps-item-title, .ant-steps-icon{
-    color: white !important;
+.pilihan-jawaban.ant-steps-item-title, .ant-steps-icon{
+    color: rgba(255, 255, 255, 0.226) !important;
+}
+.text-editor{
+    width: 100%;
+    border: none;
+}
+.ql-toolbar.ql-snow, .ql-container.ql-snow{
+    border: none !important;
+}
+.ql-formats{
+    border: solid 1px blue;
+    color: blue !important;
+    border-radius: 50px;
+    padding: 2px;
+}
+.ql-snow.ql-toolbar button svg, .ql-snow .ql-toolbar button svg {
+    color: blue !important;
 }

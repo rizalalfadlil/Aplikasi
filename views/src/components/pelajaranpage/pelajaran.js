@@ -1,24 +1,73 @@
-import React, {useState} from "react";
-import { Image } from "antd";
-import Sidebar from "../mainpage/sidebar";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'font-awesome/css/font-awesome.min.css';
-import {Steps} from "antd";
-import './style.css'
+import React, { useState, useEffect } from "react";
+import { Steps, ConfigProvider, Statistic } from "antd";
+import axios from "axios"; // Import Axios
+import RichTextEditor from "./texteditor";
 import { FontSizeChanger } from "./fontSizeChanger";
+import './style.css'
 const { Step } = Steps;
-export function HalamanUjian(){
+const { Countdown } = Statistic;
+
+const deadline = Date.now() + 1000 * 60 * 60;
+
+export function HalamanUjian() {
   const [fontSize, setFontSize] = useState(5);
   const [current, setCurrent] = useState(0);
-  const next = () => {
-    setCurrent(current + 1);
+  const [isEditMode, setisEditMode] = useState(false);
+  const [soalList, setSoalList] = useState([]); // Menyimpan daftar soal
+  const [loading, setLoading] = useState(true);
+  const [jawaban, setJawaban] = useState([]);
+  const handleJawabanChange = (selectedJawaban) => {
+    const updatedJawaban = [...jawaban];
+    updatedJawaban[current] = selectedJawaban;
+    setJawaban(updatedJawaban);
   };
 
-  const prev = () => {
-    setCurrent(current - 1);
+  const onFinish = () => {
+    console.log('finished!');
   };
+  useEffect(() => {
+    // Mengambil data soal dari "localhost:8000/contoh-soal"
+    axios
+      .get("http://localhost:8000/api/contoh-soal")
+      .then((response) => {
+        setSoalList(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
+  const next = () => {
+    if (current < soalList.length - 1) {
+      setCurrent(current + 1);
+    } else {
+      // Buat variabel untuk menyimpan jawaban
+      const collectedJawaban = [];
+      
+      // Iterasi melalui array soalList
+      for (let i = 0; i < soalList.length; i++) {
+        const jawabanIndex = i;
+        const jawabanValue = jawaban[i] || ''; // Menggunakan jawaban yang ada, atau string kosong jika tidak ada
+        
+        // Contoh format nomor jawaban: 1.A
+        const nomorJawaban = (i + 1) + '.' + jawabanValue;
+  
+        collectedJawaban.push(nomorJawaban);
+      }
+      
+      // Tampilkan hasilnya di console.log
+      console.log("Jawaban yang dikumpulkan:", collectedJawaban);
+    }
+  };
+  
+  const prev = () => {
+    if (current > 0) {
+      setCurrent(current - 1);
+    }
+  };
+  
   const onChange = (value) => {
-    console.log('onChange:', value);
     setCurrent(value);
   };
 
@@ -27,96 +76,135 @@ export function HalamanUjian(){
     setFontSize(selectedFontSize);
   };
 
-    return(
-        <div className="appbg">
-          <div className="d-flex align-items-center text-end justify-content-end">
-          <div className="row w-100 ">
-            <div className="col p-5">
-              <div className="border p-5 text-start rounded-5 text-bg-light ">
-                <div className='fs-5'><span className="p-2">Nama Pelajaran</span> | <span className="p-2">01</span></div>
-                <hr className="mt-4 mb-4"/>
-              <p className={`pt-3 pb-3 fs-`+fontSize}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi in velit at aut tempore facere fuga maxime asperiores expedita autem temporibus minus laudantium eum praesentium vero, amet laborum fugiat reiciendis!
-              </p>
-              <div className={`row mt-5 align-items-stretch g-4`}>
-                <AnswerOption no='1' fs={fontSize} isi='Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi in velit at aut tempore facere fuga maxime asperiores expedita autem temporibus minus laudantium eum praesentium vero, amet laborum fugiat reiciendis!'/>
-                <AnswerOption no='2' fs={fontSize} isi='jawaban kedua'/>
-                <AnswerOption no='3' fs={fontSize} isi='jawaban lain'/>
-                <AnswerOption no='4' fs={fontSize} isi="teks awal (gambar=https://miro.medium.com/v2/resize:fit:2000/1*ds4zdN5glMQOsPrGrLUPMA.png) teks akhir"/>
-              </div>
-              <hr className="mt-5"/>
-              <div className="row mt-4 p-2">
-                <button className="btn btn-primary p-2 rounded-pill col-2" onClick={prev}><i className="fa fa-arrow-left p-2"/>kembali</button>
-                <div className="col"></div>
-                <button className="btn btn-primary p-2 rounded-pill col-2" onClick={next}>Selanjutnya<i className="fa fa-arrow-right p-2"/></button>
-              </div>
-              </div>
-            </div>
-            <div className="col-2 gradient2 text-light text-center h100vh rsidebar">
-            <h5 className="p-4 mt-5">A list</h5>
-            <FontSizeChanger fontSize={fontSize} handleFontSizeChange={handleFontSizeChange}/>
-            <div className="p-3 mt-5 overflow-y-scroll text-light h-50 rounded-5 list-soal ">
-            <Steps
-            current={current}
-            onChange={onChange}
-            direction='vertical'
-            className="p-4"
-            >
-              <Step title="Langkah 1" />
-              <Step title="Langkah 2"/>
-              <Step title="Langkah 3" />
-              <Step title="Langkah 1" />
-              <Step title="Langkah 2"/>
-              <Step title="Langkah 3" />
-              <Step title="Langkah 1" />
-              <Step title="Langkah 2"/>
-              <Step title="Langkah 3" />
-              <Step title="Langkah 1" />
-              <Step title="Langkah 2"/>
-              <Step title="Langkah 3" />
-              <Step title="Langkah 1" />
-              <Step title="Langkah 2"/>
-              <Step title="Langkah 3" />
-              <Soal/>
-            </Steps>
-            </div>
-            </div>
-          </div>
-          </div>
-        </div>
-    )
-}
-function Soal(){
-  return (<Step title='Langkah 1'/>)
-}
-
-function AnswerOption(props) {
-  const renderContentWithImage = (isi) => {
-    const regex = /\(gambar=(.*?)\)/g; // Mencari tanda "(gambar=...)"
-    const matches = isi.split(regex); // Membagi isi berdasarkan tanda
-
-    return matches.map((part, index) => {
-      if (part.match(regex)) {
-        // Jika bagian ini adalah tanda "(gambar=...)"
-        const imgUrl = part.replace(/\(gambar=/, '').replace(')', ''); // Mendapatkan URL gambar
-        return <Image key={index} src={imgUrl} />; // Menggunakan komponen Image dari antd
-      } else {
-        // Jika bukan tanda "(gambar=...)"
-        return <span key={index}>{part}</span>; // Menampilkan teks biasa
-      }
-    });
+  const toggleEditMode = () => {
+    setisEditMode(!isEditMode);
   };
 
   return (
-    <div className="col-md-3 d-flex">
-      <input type="radio" className="btn-check" name="options" id={`option` + props.no} autoComplete="off" />
-      <label htmlFor={`option` + props.no} className="p-4 border rounded-5 btn btn-outline-primary answer-button d-flex flex-column align-items-center justify-content-center w-100">
-        <div className={`col-content fs-${props.fs}`}>
-          {renderContentWithImage(props.isi)}
+    <div className="appbg">
+      <div className="d-flex align-items-center text-end justify-content-end">
+        <div className="row w-100">
+          <div className="col p-5">
+            <div className="border row p-5 text-start rounded-5 text-bg-light">
+              <div className="fs-5 col">
+                <span className="p-2">Nama Pelajaran</span> |{" "}
+                <span className="p-2">{current + 1}</span>
+              </div>
+              <div className="col-2">
+              <Countdown title="waktu tersisa" value={deadline} onFinish={onFinish} />
+              </div>
+              <div className="col-1">
+                <button
+                  className={`bg-transparent text-primary border p-2 rounded-pill fa fa-` + (isEditMode ? `eye` : `pencil`)}
+                  onClick={toggleEditMode}
+                />
+              </div>
+              <hr className="mt-4 mb-4" />
+              {loading ? (
+                <p>Loading...</p>
+              ) : isEditMode ? (
+                <RichTextEditor />
+              ) : (
+                <p className={`pt-3 pb-3 fs-` + fontSize}>{soalList[current].pertanyaan}</p>
+              )}
+              <div className={`row mt-5 align-items-stretch g-4`}>
+                {!loading ? ( // Tambahkan kondisi loading
+                  soalList[current].pilihan_jawaban.map((pilihan, index) => (
+                    <AnswerOption
+                      isEditMode={isEditMode}
+                      no={pilihan.id_pilihan}
+                      fs={fontSize}
+                      isi={pilihan.isi}
+                      key={index}
+                      jawaban={jawaban[current]}
+                      onChange={handleJawabanChange}
+                    />
+                  ))
+                ) : (
+                  <p>Loading pilihan jawaban...</p> // Tampilkan pesan loading jika sedang dalam proses loading
+                )}
+              </div>
+
+              <hr className="mt-5" />
+              <div className="row mt-4 p-2">
+                <button className="btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2" onClick={prev}>
+                  <i className="fa fa-arrow-left p-2" />
+                  Kembali
+                </button>
+                <div className="col"></div>
+                <button className="btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2" onClick={next}>
+                  {current < soalList.length - 1?'Selanjutnya':'Selesai'}
+                  <i className={`fa fa-${current < soalList.length - 1?'arrow-right':'check'} p-2`} />
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="col-2 gradient2 text-light text-center d-none d-md-block h100vh rsidebar">
+            <h5 className="p-4 mt-5">A list</h5>
+            <FontSizeChanger fontSize={fontSize} handleFontSizeChange={handleFontSizeChange} />
+            <div className="p-3 mt-5 overflow-y-scroll text-light h-50 rounded-5 list-soal">
+              <ConfigProvider
+               theme={{
+                token: {
+                  // Seed Token
+                  colorText:'white',
+                  colorTextLabel:'white',
+                  colorTextDescription:'rgba(255, 255, 255, 0.226)',
+
+                },
+              }}
+              >
+              <Steps current={current} onChange={onChange} direction="vertical" className="p-4">
+                {soalList.map((soal, index) => {
+                  const isFinished = jawaban[index] !== undefined && jawaban[index] !== ""; // Periksa apakah ada jawaban yang terkait dengan langkah ini
+                  const stepStatus = isFinished ? "finish" : index === current ? "process" : "wait"; // Set status sesuai dengan kondisi
+                  return (
+                    <Step
+                      key={index}
+                      title={soalList[index].pertanyaan}
+                      className="pilihan-jawaban text-nowrap overflow-hidden"
+                      status={stepStatus}
+                    />
+                  );
+                })}
+              </Steps>
+              </ConfigProvider>
+            </div>
+          </div>
         </div>
-      </label>
+      </div>
     </div>
   );
 }
 
-export default AnswerOption;
+function AnswerOption(props) {
+  const handleOptionChange = () => {
+    if (props.onChange) {
+      props.onChange(props.no); // Mengirimkan jawaban terpilih ke komponen induk
+    }
+  };
+
+  return (
+    <div className={`col-md-${props.isEditMode?'12':'3'} d-flex`}>
+      {props.isEditMode?
+      (
+        <div className="border border-primary p-2 rounded-5 w-100">
+          <RichTextEditor/>
+        </div>
+      )
+      :
+      (
+       <>
+        <input type="radio" className="btn-check" name="options" id={`option` + props.no} autoComplete="off" checked={props.no === props.jawaban} onChange={handleOptionChange}/>
+          <label htmlFor={`option` + props.no} className="p-4 border rounded-5 btn btn-outline-primary answer-button d-flex flex-column align-items-center justify-content-center w-100">
+            <div className={`col-content fs-${props.fs}`}>
+              {props.isi}
+            </div>
+          </label>
+        </>
+      )
+      }
+    </div>
+  );
+}
+
