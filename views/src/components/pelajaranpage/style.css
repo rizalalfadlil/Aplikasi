@@ -27,9 +27,6 @@ input[type='radio']:checked .answer-button{
     z-index: 1;
     overflow: hidden;
 }
-.pilihan-jawaban.ant-steps-item-title, .ant-steps-icon{
-    color: rgba(255, 255, 255, 0.226) !important;
-}
 .text-editor{
     width: 100%;
     border: none;

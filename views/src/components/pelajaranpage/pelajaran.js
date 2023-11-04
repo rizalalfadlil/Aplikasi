@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Steps, ConfigProvider, Statistic } from "antd";
+import { Steps, ConfigProvider, Statistic, Progress, Tooltip } from "antd";
 import axios from "axios"; // Import Axios
 import RichTextEditor from "./texteditor";
 import { FontSizeChanger } from "./fontSizeChanger";
+import { calculateCountdown } from "./component/countDown";
 import './style.css'
 const { Step } = Steps;
 const { Countdown } = Statistic;
 
-const deadline = Date.now() + 1000 * 60 * 60;
-
+const deadline = Date.now() + 1000 * 3 * 60;
+const submitTime = 2.9;
+const gradient = { '0%': 'rgb(0, 108, 196)', '100%': '#153ec5' };
 export function HalamanUjian() {
   const [fontSize, setFontSize] = useState(5);
   const [current, setCurrent] = useState(0);
@@ -16,12 +18,20 @@ export function HalamanUjian() {
   const [soalList, setSoalList] = useState([]); // Menyimpan daftar soal
   const [loading, setLoading] = useState(true);
   const [jawaban, setJawaban] = useState([]);
+  const [countdown, setCountdown] = useState(calculateCountdown(deadline));
+  const [isDisabled, setIsDisabled] = useState(true);
+// Hitung jumlah soal yang telah dijawab
+const jumlahSoalDijawab = jawaban.filter(j => j !== 'x').length;
+
+// Hitung persentase progres berdasarkan jumlah soal yang telah dijawab dan jumlah total soal
+const persentaseProgres = (jumlahSoalDijawab / soalList.length) * 100;
+
   const handleJawabanChange = (selectedJawaban) => {
     const updatedJawaban = [...jawaban];
     updatedJawaban[current] = selectedJawaban;
     setJawaban(updatedJawaban);
+    console.log(jawaban);
   };
-
   const onFinish = () => {
     console.log('finished!');
   };
@@ -30,14 +40,41 @@ export function HalamanUjian() {
     axios
       .get("http://localhost:8000/api/contoh-soal")
       .then((response) => {
+        const jumlahSoal = response.data.length;
+        const jawabanSementara = Array(jumlahSoal).fill('x');
         setSoalList(response.data);
+        setJawaban(jawabanSementara);
         setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown(calculateCountdown(deadline - (submitTime * 1000 * 60)));
+    }, 1000);
 
+    return () => {
+      clearInterval(timer);
+    };
+  }, [deadline]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (countdown > 0) {
+        setCountdown(countdown - 1);
+      } else {
+        setIsDisabled(false); // Menghilangkan atribut disabled saat waktu habis
+        clearInterval(timer); // Memberhentikan interval
+      }
+    }, 1000); // Update setiap 1 detik
+
+    return () => {
+      clearInterval(timer); // Membersihkan interval saat komponen dibongkar
+    };
+  }, [countdown]);
+  
   const next = () => {
     if (current < soalList.length - 1) {
       setCurrent(current + 1);
@@ -132,10 +169,21 @@ export function HalamanUjian() {
                   Kembali
                 </button>
                 <div className="col"></div>
-                <button className="btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2" onClick={next}>
-                  {current < soalList.length - 1?'Selanjutnya':'Selesai'}
-                  <i className={`fa fa-${current < soalList.length - 1?'arrow-right':'check'} p-2`} />
+                {current < soalList.length -1?(
+                  <button className={`btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2`} onClick={next}>
+                  Selanjutnya
+                  <i className={`fa fa-arrow-right p-2`} />
                 </button>
+                ):(
+                  <Tooltip title={`Tombol ini akan terbuka dalam ${countdown} detik`} fresh>
+                    <button
+                      className={`btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2 ${isDisabled ? "disabled" : ""}`}
+                    >
+                      Selesai
+                      <i className={`fa fa-check p-2`} />
+                    </button>
+                  </Tooltip>
+                )}
               </div>
             </div>
           </div>
@@ -156,7 +204,7 @@ export function HalamanUjian() {
               >
               <Steps current={current} onChange={onChange} direction="vertical" className="p-4">
                 {soalList.map((soal, index) => {
-                  const isFinished = jawaban[index] !== undefined && jawaban[index] !== ""; // Periksa apakah ada jawaban yang terkait dengan langkah ini
+                  const isFinished = jawaban[index] !== undefined && jawaban[index] !== "x"; // Periksa apakah ada jawaban yang terkait dengan langkah ini
                   const stepStatus = isFinished ? "finish" : index === current ? "process" : "wait"; // Set status sesuai dengan kondisi
                   return (
                     <Step
@@ -169,6 +217,19 @@ export function HalamanUjian() {
                 })}
               </Steps>
               </ConfigProvider>
+            </div>
+            <div className="p-5">
+            <ConfigProvider
+               theme={{
+                token: {
+                  // Seed Token
+                  colorText:'white',
+
+                },
+              }}
+              >
+              <Progress percent={(persentaseProgres)} strokeColor={gradient} size={[180, 15]}/>
+            </ConfigProvider>
             </div>
           </div>
         </div>
