@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Steps, ConfigProvider, Statistic, Progress, Tooltip } from "antd";
+import { Steps, ConfigProvider, Statistic, Progress, Tooltip, Popover } from "antd";
 import axios from "axios"; // Import Axios
 import RichTextEditor from "./texteditor";
 import { FontSizeChanger } from "./fontSizeChanger";
@@ -18,13 +18,55 @@ export function HalamanUjian() {
   const [soalList, setSoalList] = useState([]); // Menyimpan daftar soal
   const [loading, setLoading] = useState(true);
   const [jawaban, setJawaban] = useState([]);
-  const [countdown, setCountdown] = useState(calculateCountdown(deadline));
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [semuaSoalSelesai, setSemuaSoalSelesai] = useState(false);
+  const [waktuTungguTerlewati, setWaktuTungguterlewati] = useState(false);
 // Hitung jumlah soal yang telah dijawab
 const jumlahSoalDijawab = jawaban.filter(j => j !== 'x').length;
 
 // Hitung persentase progres berdasarkan jumlah soal yang telah dijawab dan jumlah total soal
 const persentaseProgres = (jumlahSoalDijawab / soalList.length) * 100;
+const waitTime = () =>{
+  setWaktuTungguterlewati(true);
+}
+const allDone = () =>{
+  setSemuaSoalSelesai(true);
+}
+const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(false));
+const unlockSubmit = (
+  <>
+    <h6 className="mb-2">Syarat Penyelesaian</h6>
+    <ul>
+      {persentaseProgres < 100 && (
+        <li>
+          Selesaikan Semua Soal
+          <Progress percent={persentaseProgres} />
+        </li>
+      )}
+      {!waktuTungguTerlewati && (
+        <li>
+          Tunggu hingga
+          <ConfigProvider
+            theme={{
+              token: {
+                fontSize: 8
+              }
+            }}
+          >
+            <Countdown value={deadline - (submitTime * 1000 * 60)} onFinish={waitTime} />
+          </ConfigProvider>
+        </li>
+      )}
+    </ul>
+  </>
+);
+
+
+  const toggleStepVisibility = (index) => {
+    const newVisibleSteps = [...visibleSteps];
+    newVisibleSteps[index] = true;
+    setVisibleSteps(newVisibleSteps);
+  };
 
   const handleJawabanChange = (selectedJawaban) => {
     const updatedJawaban = [...jawaban];
@@ -42,6 +84,7 @@ const persentaseProgres = (jumlahSoalDijawab / soalList.length) * 100;
       .then((response) => {
         const jumlahSoal = response.data.length;
         const jawabanSementara = Array(jumlahSoal).fill('x');
+        const soalSementara = Array(jumlahSoal).fill('kosong');
         setSoalList(response.data);
         setJawaban(jawabanSementara);
         setLoading(false);
@@ -50,30 +93,6 @@ const persentaseProgres = (jumlahSoalDijawab / soalList.length) * 100;
         console.error("Error fetching data:", error);
       });
   }, []);
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(calculateCountdown(deadline - (submitTime * 1000 * 60)));
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [deadline]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (countdown > 0) {
-        setCountdown(countdown - 1);
-      } else {
-        setIsDisabled(false); // Menghilangkan atribut disabled saat waktu habis
-        clearInterval(timer); // Memberhentikan interval
-      }
-    }, 1000); // Update setiap 1 detik
-
-    return () => {
-      clearInterval(timer); // Membersihkan interval saat komponen dibongkar
-    };
-  }, [countdown]);
   
   const next = () => {
     if (current < soalList.length - 1) {
@@ -169,28 +188,40 @@ const persentaseProgres = (jumlahSoalDijawab / soalList.length) * 100;
                   Kembali
                 </button>
                 <div className="col"></div>
+                <Popover content={unlockSubmit} zIndex={(current < soalList.length -1) || (waktuTungguTerlewati && persentaseProgres === 100)?-1070:1070}>
                 {current < soalList.length -1?(
                   <button className={`btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2`} onClick={next}>
                   Selanjutnya
                   <i className={`fa fa-arrow-right p-2`} />
                 </button>
-                ):(
-                  <Tooltip title={`Tombol ini akan terbuka dalam ${countdown} detik`} fresh>
+                ):
+                  waktuTungguTerlewati && persentaseProgres === 100 ?(
                     <button
-                      className={`btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2 ${isDisabled ? "disabled" : ""}`}
-                    >
-                      Selesai
-                      <i className={`fa fa-check p-2`} />
-                    </button>
-                  </Tooltip>
-                )}
+                        className={`btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2`}
+                      >
+                        Selesai
+                        <i className={`fa fa-check p-2`} />
+                      </button>
+                  ):( 
+                      <button
+                        className={`btn border border-primary border-opacity-25 btn-outline-secondary p-2 rounded-pill col-5 col-md-2`}
+                      >
+                        Selesai
+                        <i className={`fa fa-lock p-2`} />
+                      </button>
+                  
+                  )}
+                </Popover>
               </div>
             </div>
           </div>
-          <div className="col-2 gradient2 text-light text-center d-none d-md-block h100vh rsidebar">
-            <h5 className="p-4 mt-5">A list</h5>
-            <FontSizeChanger fontSize={fontSize} handleFontSizeChange={handleFontSizeChange} />
-            <div className="p-3 mt-5 overflow-y-scroll text-light h-50 rounded-5 list-soal">
+          <div className={`col-2 gradient2 text-light text-start d-none d-md-block h100vh rsidebar fs-${fontSize}`}>
+            <h5 className="p-4 mt-5 text-center">menu</h5>
+            <div className=" p-5 pb-0 pt-0">
+            <FontSizeChanger fontSize={fontSize} handleFontSizeChange={handleFontSizeChange}/>
+            </div>
+            <p className="p-5 pb-0">daftar soal</p>
+            <div className="p-3 pt-0 overflow-y-scroll text-light h-50 rounded-5 list-soal">
               <ConfigProvider
                theme={{
                 token: {
@@ -202,23 +233,30 @@ const persentaseProgres = (jumlahSoalDijawab / soalList.length) * 100;
                 },
               }}
               >
-              <Steps current={current} onChange={onChange} direction="vertical" className="p-4">
+              <Steps current={current} onChange={onChange} direction="vertical" className="p-4 pb-0">
                 {soalList.map((soal, index) => {
-                  const isFinished = jawaban[index] !== undefined && jawaban[index] !== "x"; // Periksa apakah ada jawaban yang terkait dengan langkah ini
-                  const stepStatus = isFinished ? "finish" : index === current ? "process" : "wait"; // Set status sesuai dengan kondisi
+                  const isFinished = jawaban[index] !== undefined && jawaban[index] !== "x";
+                  const stepStatus = isFinished ? "finish" : index === current ? "process" : "wait";
+                  const stepTitle = isFinished ? soalList[index].pertanyaan : visibleSteps[index] ? soalList[index].pertanyaan : "???";
+
+                  if (!visibleSteps[index] && stepStatus === "process") {
+                    toggleStepVisibility(index);
+                  }
+
                   return (
-                    <Step
-                      key={index}
-                      title={soalList[index].pertanyaan}
-                      className="pilihan-jawaban text-nowrap overflow-hidden"
-                      status={stepStatus}
-                    />
+                        <Step
+                        key={index}
+                        title={stepTitle}
+                        className="pilihan-jawaban text-nowrap overflow-hidden"
+                        status={stepStatus}
+                      />
                   );
                 })}
               </Steps>
               </ConfigProvider>
             </div>
-            <div className="p-5">
+            <div className="p-5 pt-2">
+              <p>Progress Penyelesaian</p>
             <ConfigProvider
                theme={{
                 token: {
@@ -268,4 +306,21 @@ function AnswerOption(props) {
     </div>
   );
 }
-
+const unlockSubmit =  (
+  <ul>
+    <li>Selesaikan Semua Soal
+    <Progress percent={10} strokeColor={gradient} size={[180, 15]}/>
+    </li>
+    <li>Tunggu hingga 
+      <ConfigProvider
+        theme={{
+          token: {
+            fontSize:8
+          },
+        }}
+      >
+      <Countdown value={deadline - (submitTime * 1000 * 60)}/>
+      </ConfigProvider>
+    </li>
+  </ul>
+);
