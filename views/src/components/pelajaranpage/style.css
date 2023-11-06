@@ -2,9 +2,14 @@
     z-index: 5;
     right: 0;
 }
-input[type='radio']:checked .answer-button{
-    background-color: rgb(236, 236, 236) !important;
-    color: blue !important;
+input[type='radio']:checked+ .answer-button{
+    background:linear-gradient(to right, rgb(0, 108, 196), #153ec5);
+}
+.answer-button{
+    background : linear-gradient(to right, rgb(189, 189, 189), rgb(139, 139, 139));
+}
+.answer-button:hover{
+    background:linear-gradient(to right, #97a9e2, #486ada);
 }
 .list-soal::-webkit-scrollbar{
     background: none;
@@ -35,7 +40,7 @@ input[type='radio']:checked .answer-button{
     border: none !important;
 }
 .ql-formats{
-    border: solid 1px blue;
+
     color: blue !important;
     border-radius: 50px;
     padding: 2px;

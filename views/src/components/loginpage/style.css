@@ -18,6 +18,9 @@ button{
 .gradient1{
 background: var(--main-gradient);
 }
+.gradient1r{
+    background: var(--main-gradient-rotate);
+    }
 .gradient2{
  background: var(--gradient2);
 }

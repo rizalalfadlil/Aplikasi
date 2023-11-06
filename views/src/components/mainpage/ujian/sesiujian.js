@@ -36,29 +36,63 @@ export function SesiUjian(props){
           })
           // Handle response sesuai kebutuhan Anda
           // Contoh: Jika response.status adalah 200, berarti update berhasil
+          props.fetchExamSessions();
         } catch (error) {
           console.error('Gagal mengupdate sesi ujian:', error);
         }
       };
            
-    const deleteExamSession = async () =>{
+      const deleteExamSession = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/api/exam-sessions/${props.id}`, {
+          // 1. Ambil daftar mata pelajaran yang terkait dengan sesi ujian yang akan dihapus
+          const subjectsResponse = await fetch(`http://localhost:8000/api/subjects?examSessionId=${props.id}`);
+          if (!subjectsResponse.ok) {
+            throw new Error('Gagal mengambil daftar mata pelajaran terkait');
+          }
+      
+          const subjectsData = await subjectsResponse.json();
+      
+          // 2. Hapus semua mata pelajaran terkait
+          const deleteSubjectPromises = subjectsData.map(async (subject) => {
+            const subjectId = subject.id;
+            const subjectDeleteResponse = await fetch(`http://localhost:8000/api/subjects/${subjectId}`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
-              }
-            })
-            window.location.reload();
-          } catch (error) {
-            console.error('Gagal menghapus sesi ujian:', error);
+              },
+            });
+      
+            if (!subjectDeleteResponse.ok) {
+              throw new Error(`Gagal menghapus mata pelajaran dengan ID ${subjectId}`);
+            }
+          });
+      
+          await Promise.all(deleteSubjectPromises);
+      
+          // 3. Hapus sesi ujian setelah semua mata pelajaran terkait telah dihapus
+          const sessionDeleteResponse = await fetch(`http://localhost:8000/api/exam-sessions/${props.id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+      
+          if (!sessionDeleteResponse.ok) {
+            throw new Error('Gagal menghapus sesi ujian');
           }
-    }
+      
+          // Reload halaman setelah penghapusan berhasil
+          props.fetchExamSessions();
+        } catch (error) {
+          console.error('Gagal menghapus sesi ujian:', error);
+        }
+      };
+      
 
       const handleUpdate = () => {
         updateExamSession();
         setIsEdited(false); // Setelah update, tutup mode edit
-        window.location.reload();
+        props.fetchExamSessions();
       };
       
     return(
@@ -89,6 +123,7 @@ export function SesiUjian(props){
               (
               <>
               <li><h5><b>{props.judul}</b></h5></li>
+              <li><p className="badge text-dark">{props.id}</p></li>
               {props.strictMode?(<li className='badge rounded-pill text-bg-danger'>strict mode</li>):(<li className='badge rounded-pill text-bg-success'>normal mode</li>)}
               <li className='text-nowrap'><span className='badge rounded-pill text-light mt-2 gradient1'>{dayjs(props.startTime).format(showedFormat)}</span> - <span className='badge rounded-pill text-light gradient1'>{dayjs(props.submissionDeadline).format(showedFormat)}</span></li>
               </>
@@ -107,8 +142,7 @@ export function SesiUjian(props){
                 <h5 className='ml-4 mt-2 col'>List Pelajaran</h5>
                 <div className='col d-flex justify-content-end w-100'><button className='btn btn-primary rounded-pill text-nowrap'><i className='fa fa-plus m-2'/> tambah data</button></div>
               </div>
-              <Pelajaran/>
-              <Pelajaran/>
+              {props.children}
             </div>
             )
           :

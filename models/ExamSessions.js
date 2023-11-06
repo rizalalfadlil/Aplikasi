@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Sesuaikan dengan konfigurasi Anda
+const { DataTypes, Sequelize } = require('sequelize');
+const sequelize = require('../config/database');
 
 const ExamSession = sequelize.define('ExamSession', {
   name: {

@@ -1,5 +1,6 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Sesuaikan dengan konfigurasi Anda
+const { DataTypes, Sequelize } = require('sequelize');
+const sequelize = require('../config/database');
+const ExamSession = require('./ExamSessions'); // Import model ExamSession
 
 const Subject = sequelize.define('Subject', {
   name: {
@@ -7,7 +8,7 @@ const Subject = sequelize.define('Subject', {
     allowNull: false,
   },
   questions: {
-    type: DataTypes.JSON, // Soal-soal dalam bentuk JSON
+    type: DataTypes.JSON,
     allowNull: false,
   },
   submissionDeadline: {
@@ -19,5 +20,8 @@ const Subject = sequelize.define('Subject', {
     allowNull: false,
   },
 });
+
+// Tambahkan relasi "belongsTo" ke model ExamSession
+Subject.belongsTo(ExamSession, { foreignKey: 'examSessionId' });
 
 module.exports = Subject;
