@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { FontSizeChanger } from "./fontSizeChanger";
-import { Steps, ConfigProvider, Progress, Statistic, Popover, Modal} from "antd";
+import { Steps, ConfigProvider, Progress, Statistic, Popover, Modal, message} from "antd";
 const { Step } = Steps;
 const { Countdown } = Statistic;
 const gradient = { '0%': 'rgb(0, 108, 196)', '100%': '#153ec5' };
@@ -16,6 +16,7 @@ export const RightSidebar = (props) => {
           if (currentTime > deadline - submitTime * 1000 * 60) {
             // Batas waktu telah terlewati, setel waktuTungguTerlewati menjadi true
             setWaktuTungguterlewati(true);
+            message.info('waktu tunggu terlewati, ujian bisa diselesaikan sekarang jika semua soal sudah dikerjakan!');
             // Hentikan interval karena kita sudah tidak perlu lagi memeriksanya
             clearInterval(intervalId);
           }
@@ -78,7 +79,7 @@ export const RightSidebar = (props) => {
               {soalList.map((soal, index) => {
                 const isFinished = jawaban[index] !== undefined && jawaban[index] !== "x";
                 const stepStatus = isFinished ? "finish" : index === current ? "process" : "wait";
-                const stepTitle = isFinished ? soalList[index].pertanyaan : visibleSteps[index] ? soalList[index].pertanyaan : "???";
+                const stepTitle = isFinished ? soalList[index].pertanyaan : visibleSteps[index] ? soalList[index].pertanyaan : ". . . ";
   
                 if (!visibleSteps[index] && stepStatus === "process") {
                   toggleStepVisibility(index);

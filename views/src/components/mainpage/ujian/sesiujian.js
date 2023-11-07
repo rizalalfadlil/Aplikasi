@@ -1,11 +1,12 @@
 import React, {useState} from "react";
-import { DatePicker, Switch } from 'antd';
+import { DatePicker, Popconfirm, Switch, message } from 'antd';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import { Pelajaran } from "./pelajaran";
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import axios from "axios";
+import { CreatePelajaran } from "./buatpelajaran";
 const { RangePicker } = DatePicker;
 dayjs.extend(customParseFormat);
 const showedFormat = 'DD-MM-YYYY';
@@ -36,8 +37,10 @@ export function SesiUjian(props){
           })
           // Handle response sesuai kebutuhan Anda
           // Contoh: Jika response.status adalah 200, berarti update berhasil
+          message.success('Berhasil Memperbarui Data Ujian')
           props.fetchExamSessions();
         } catch (error) {
+          message.error('Gagal Memperbarui Data Ujian')
           console.error('Gagal mengupdate sesi ujian:', error);
         }
       };
@@ -83,7 +86,9 @@ export function SesiUjian(props){
       
           // Reload halaman setelah penghapusan berhasil
           props.fetchExamSessions();
+          message.success('Berhasil Menghapus Data Ujian')
         } catch (error) {
+          message.error('Gagal Menghapus Data Ujian')
           console.error('Gagal menghapus sesi ujian:', error);
         }
       };
@@ -132,7 +137,16 @@ export function SesiUjian(props){
             <div className='col justify-content-end d-flex'>
             <div className='align-items-end w-10 btn-group-vertical'>
             <button className={`btn fa fa-${isEdited ? 'check' : 'pencil'} rounded-pill edit-button`} onClick={isEdited ? handleUpdate : toggleEdit} />
-            <button className={`btn fa fa-${isEdited?'times':'trash'} rounded-pill edit-button`} onClick={isEdited?toggleEdit : deleteExamSession}/>
+            <Popconfirm
+            title={isEdited?'Keluar Dari Mode Edit?':'Yakin ingin Menghapus Data ini?'}
+            description={isEdited?'Perubahan Belum Tersimpan':'Data tidak akan bisa dikembalikan lagi'}
+            onConfirm={isEdited?toggleEdit : deleteExamSession}
+            placement="left"
+            okButtonProps={({classNames:'rounded-pill border'})}
+            cancelText='batal'
+                  >
+            <button className={`btn fa fa-${isEdited?'times':'trash'} rounded-pill edit-button`}/>
+            </Popconfirm>
             </div>
             </div>
             {isEdited?
@@ -140,8 +154,8 @@ export function SesiUjian(props){
               <div className='w-100 g-3 row bg-secondary rounded-5 p-3 bg-opacity-10'>
               <div className='row m-2 w-100'>
                 <h5 className='ml-4 mt-2 col'>List Pelajaran</h5>
-                <div className='col d-flex justify-content-end w-100'><button className='btn btn-primary rounded-pill text-nowrap'><i className='fa fa-plus m-2'/> tambah data</button></div>
               </div>
+              <CreatePelajaran/>
               {props.children}
             </div>
             )

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Steps, ConfigProvider, Statistic, Progress, Tooltip, Popover } from "antd";
+import { Statistic } from "antd";
 import axios from "axios"; // Import Axios
-import RichTextEditor from "./texteditor";
-import { calculateCountdown } from "./component/countDown";
 import { AnswerOption } from "./component/answeroption";
 import './style.css'
 import { RightSidebar } from "./component/sidebar";
 const { Countdown } = Statistic;
-const submitTime = 29;
+const submitTime = 29.9;
 const time = 30;
 export function HalamanUjian() {
 
@@ -114,6 +112,8 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
           <div className="col p-5">
             <div className="border row p-5 text-start rounded-5 text-bg-light">
               <div className="fs-5 col">
+                <p className="fs-6 badge fw-light mb-0 text-opacity-50 text-secondary">Nama Ujian</p>
+                <div className="fs-4">
                 <span className="p-2">Nama Pelajaran</span> |{" "}
                 <span className="p-2">{current + 1}</span>
                 <button className="btn btn-outline-primary border"
@@ -129,24 +129,15 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
                 >
                   Reset Timer
                 </button>
-              </div>
-              <div className="col-2">
-              <Countdown title="waktu tersisa" value={deadline} onFinish={onFinish} />
+                </div>
               </div>
               <div className="col-1">
-                <button
-                  className={`bg-transparent text-primary border p-2 rounded-pill fa fa-` + (isEditMode ? `eye` : `pencil`)}
-                  onClick={toggleEditMode}
-                />
+              <Countdown title="waktu tersisa" value={deadline} onFinish={onFinish} />
               </div>
               <hr className="mt-4 mb-4" />
               {loading ? (
                 <p>Loading...</p>
-              ) : isEditMode ? (
-                <RichTextEditor />
-              ) : (
-                <p className={`pt-3 pb-3 fs-` + fontSize}>{soalList[current].pertanyaan}</p>
-              )}
+              ) :(<p className={`pt-3 pb-3 fs-` + fontSize}>{soalList[current].pertanyaan}</p>)}
               <div className={`row mt-5 align-items-stretch g-4`}>
                 {!loading ? ( // Tambahkan kondisi loading
                   soalList[current].pilihan_jawaban.map((pilihan, index) => (
@@ -167,31 +158,30 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
 
               <hr className="mt-5" />
               <div className="row mt-4 p-2">
-                <button className="btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2" onClick={prev}>
+                {current !== 0 ?(
+                  <button className="btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2" onClick={prev}>
                   <i className="fa fa-arrow-left p-2" />
                   Kembali
                 </button>
+                ):''}
                 <div className="col"></div>
                 {current < soalList.length -1?(
                   <button className={`btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2`} onClick={next}>
                   Selanjutnya
                   <i className={`fa fa-arrow-right p-2`} />
                 </button>
-                ):(
-                <button
-                 className={`btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2`}
-                >
-                  Selesai
-                 <i className={`fa fa-check p-2`} />
+                ): (
+                <button className={`btn border border-primary border-opacity-25 btn-outline-primary p-2 rounded-pill col-5 col-md-2`} onClick={() => onChange(0)}>
+                  kembali ke awal
+                  <i className={`fa fa-arrow-up p-2`} />
                 </button>
-                  )}
+                )}
               </div>
             </div>
           </div>
           <RightSidebar
             fontSize={fontSize}
             current={current}
-            isEditMode={isEditMode}
             soalList={soalList}
             jawaban={jawaban}
             toggleEditMode={toggleEditMode}

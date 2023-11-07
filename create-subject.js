@@ -3,9 +3,9 @@ const sequelize = require('./config/database'); // Pastikan Anda mengimpor konek
 
 // Definisikan data mata pelajaran beserta ID sesi ujian yang terkait
 const subjectsData = [
-  { name: 'Mata Pelajaran 234', questions: [], submissionDeadline: new Date(), startTime: new Date(), examSessionId: 17 },
-  { name: 'Mata Pelajaran 2234', questions: [], submissionDeadline: new Date(), startTime: new Date(), examSessionId: 17 },
-  { name: 'Mata Pelajaran 112', questions: [], submissionDeadline: new Date(), startTime: new Date(), examSessionId: 18 },
+  { name: 'Mata Pelajaran 234', questions: [], submissionDeadline: new Date(), startTime: new Date(), examSessionId: 22 },
+  { name: 'Mata Pelajaran 2234', questions: [], submissionDeadline: new Date(), startTime: new Date(), examSessionId: 22 },
+  { name: 'Mata Pelajaran 112', questions: [], submissionDeadline: new Date(), startTime: new Date(), examSessionId: 22 },
 ];
 
 // Fungsi untuk mengisi data mata pelajaran

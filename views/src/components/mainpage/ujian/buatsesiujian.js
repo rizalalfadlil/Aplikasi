@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { DatePicker, Switch } from 'antd';
+import { DatePicker, Switch, message } from 'antd';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import { Pelajaran } from "./pelajaran";
@@ -37,6 +37,7 @@ export function InsertSesiUjian(props){
         })
         // Handle response sesuai kebutuhan Anda
         // Contoh: Jika response.status adalah 200, berarti update berhasil
+        message.success('Berhasil Membuat Data Ujian')
       } catch (error) {
         console.error('Gagal membuat sesi ujian:', error);
       }
