@@ -14,7 +14,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
         </div>
         <div className='list-group mt-5 bg-transparent text-center w-100 pt-5 p-2'>
           <SideMenu isOpen={isOpen} icon="user" title="Menu 1" link='/'/>
-          <SideMenu isOpen={isOpen} icon="bars" title="Menu 2" link='pelajaran'/>
+          <SideMenu isOpen={isOpen} icon="bars" title="Kerjakan Soal" link='pelajaran'/>
+          <SideMenu isOpen={isOpen} icon="pencil" title="Buat Soal" link='create-soal'/>
           <SideMenu isOpen={isOpen} icon='sign-out' title='Log-out' link='login'/>
         </div>
       </div>

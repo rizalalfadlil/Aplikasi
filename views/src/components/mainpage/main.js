@@ -52,7 +52,7 @@ export function MainPage() {
 
   return (
     <div className="App text-start">
-          <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} openSidebar={setIsSidebarOpen} />
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} openSidebar={setIsSidebarOpen} />
       <button className="navbar-toggler m-3 text-dark" onClick={toggleSidebar}>
         ☰
       </button>

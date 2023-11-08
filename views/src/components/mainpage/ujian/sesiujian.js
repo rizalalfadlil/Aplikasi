@@ -155,8 +155,8 @@ export function SesiUjian(props){
               <div className='row m-2 w-100'>
                 <h5 className='ml-4 mt-2 col'>List Pelajaran</h5>
               </div>
-              <CreatePelajaran/>
               {props.children}
+              <CreatePelajaran/>
             </div>
             )
           :

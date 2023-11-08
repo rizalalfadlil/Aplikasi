@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { message } from 'antd';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
 import 'font-awesome/css/font-awesome.min.css';
@@ -24,7 +25,7 @@ const Login = () => {
 
       // Tangani respons dari server sesuai dengan kebutuhan Anda
       if (response.status === 200) {
-        console.log(response.data.message)
+        message.success(response.data.message);
         
         window.location.href = "/";
         //localStorage.setItem('notification', JSON.stringify({message:'notifikasi', type:'success'}))
@@ -34,7 +35,7 @@ const Login = () => {
       }
     } catch (error) {
       // Tangani kesalahan, seperti ketika server tidak dapat dijangkau.
-      console.error('Terjadi Error:', error.response.data.error);
+      message.error('Login Gagal : ' + error.response.data.error);
     }
   };
 
