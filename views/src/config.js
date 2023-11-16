@@ -1,0 +1,1 @@
+export const ResourceLink = 'http://localhost:8000';

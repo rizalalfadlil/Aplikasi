@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { DatePicker, Popconfirm, Switch, message } from 'antd';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { ResourceLink } from "../../../config";
 import 'font-awesome/css/font-awesome.min.css';
 import { Pelajaran } from "./pelajaran";
 import dayjs from 'dayjs';
@@ -22,7 +23,7 @@ export function SesiUjian(props){
     }
     const updateExamSession = async () => {
         try {
-          const response = await fetch(`http://localhost:8000/api/exam-sessions/${props.id}`, {
+          const response = await fetch(`${ResourceLink}/api/exam-sessions/${props.id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -44,11 +45,10 @@ export function SesiUjian(props){
           console.error('Gagal mengupdate sesi ujian:', error);
         }
       };
-           
       const deleteExamSession = async () => {
         try {
           // 1. Ambil daftar mata pelajaran yang terkait dengan sesi ujian yang akan dihapus
-          const subjectsResponse = await fetch(`http://localhost:8000/api/subjects?examSessionId=${props.id}`);
+          const subjectsResponse = await fetch(`${ResourceLink}/api/subjects?examSessionId=${props.id}`);
           if (!subjectsResponse.ok) {
             throw new Error('Gagal mengambil daftar mata pelajaran terkait');
           }
@@ -58,7 +58,7 @@ export function SesiUjian(props){
           // 2. Hapus semua mata pelajaran terkait
           const deleteSubjectPromises = subjectsData.map(async (subject) => {
             const subjectId = subject.id;
-            const subjectDeleteResponse = await fetch(`http://localhost:8000/api/subjects/${subjectId}`, {
+            const subjectDeleteResponse = await fetch(`${ResourceLink}/api/subjects/${subjectId}`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export function SesiUjian(props){
           await Promise.all(deleteSubjectPromises);
       
           // 3. Hapus sesi ujian setelah semua mata pelajaran terkait telah dihapus
-          const sessionDeleteResponse = await fetch(`http://localhost:8000/api/exam-sessions/${props.id}`, {
+          const sessionDeleteResponse = await fetch(`${ResourceLink}/api/exam-sessions/${props.id}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -156,7 +156,7 @@ export function SesiUjian(props){
                 <h5 className='ml-4 mt-2 col'>List Pelajaran</h5>
               </div>
               {props.children}
-              <CreatePelajaran/>
+              <CreatePelajaran id={props.id} title={editedJudul} deadline={editedSubmissionDeadline}/>
             </div>
             )
           :

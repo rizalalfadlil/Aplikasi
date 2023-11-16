@@ -19,6 +19,10 @@ const Subject = sequelize.define('Subject', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  examSessionId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 // Tambahkan relasi "belongsTo" ke model ExamSession

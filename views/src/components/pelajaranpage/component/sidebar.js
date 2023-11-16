@@ -6,7 +6,7 @@ const { Countdown } = Statistic;
 const gradient = { '0%': 'rgb(0, 108, 196)', '100%': '#153ec5' };
 export const RightSidebar = (props) => {
     const [waktuTungguTerlewati, setWaktuTungguterlewati] = useState(false);
-    const { fontSize, current, isEditMode, soalList, jawaban, toggleEditMode, handleFontSizeChange, onChange, handleJawabanChange, next, prev, persentaseProgres, submitTime, deadline, toggleStepVisibility, visibleSteps } = props;
+    const { fontSize, current, isEditMode, soalList, jawaban, onSubmit, toggleEditMode, handleFontSizeChange, onChange, handleJawabanChange, next, prev, persentaseProgres, submitTime, deadline, toggleStepVisibility, visibleSteps } = props;
     const waitTime = () =>{
       setWaktuTungguterlewati(true);
     }
@@ -58,6 +58,10 @@ export const RightSidebar = (props) => {
           </ul>
         </>
       );
+      function htmlToPlainText(htmlString) {
+        const doc = new DOMParser().parseFromString(htmlString, 'text/html');
+        return doc.body.textContent || "";
+      }
     return (
       <div className={`col-2 gradient2 text-light text-start d-none d-md-block h100vh rsidebar fs-${fontSize}`}>
         <h5 className="p-4 mt-5 text-center">menu</h5>
@@ -75,18 +79,18 @@ export const RightSidebar = (props) => {
               },
             }}
           >
-            <Steps current={current} onChange={onChange} direction="vertical" className="p-4 pt-0 pb-0">
+             <Steps current={current} onChange={onChange} direction="vertical" className="p-4 pt-0 pb-0">
               {soalList.map((soal, index) => {
                 const isFinished = jawaban[index] !== undefined && jawaban[index] !== "x";
                 const stepStatus = isFinished ? "finish" : index === current ? "process" : "wait";
-                const stepTitle = isFinished ? soalList[index].pertanyaan : visibleSteps[index] ? soalList[index].pertanyaan : ". . . ";
-  
+                const stepTitle = isFinished ? htmlToPlainText(soalList[index].pertanyaan) : visibleSteps[index] ? htmlToPlainText(soalList[index].pertanyaan) : ". . . ";
+
                 if (!visibleSteps[index] && stepStatus === "process") {
                   toggleStepVisibility(index);
                 }
-  
+
                 return (
-                  <Step
+                  <Steps.Step
                     key={index}
                     title={stepTitle}
                     className="pilihan-jawaban text-nowrap overflow-hidden"
@@ -109,6 +113,7 @@ export const RightSidebar = (props) => {
                   okText: 'submit',
                   okButtonProps: ({className:'rounded-pill'}),
                   cancelButtonProps:({className:'border rounded-pill m-2'}),
+                  onOk: onSubmit,
                   centered:'true',
                   cancelText: 'batal',
                   footer: (_, { OkBtn, CancelBtn }) => (

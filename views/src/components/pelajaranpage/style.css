@@ -48,3 +48,6 @@ input[type='radio']:checked+ .answer-button{
 .ql-snow.ql-toolbar button svg, .ql-snow .ql-toolbar button svg {
     color: blue !important;
 }
+.danger-html p{
+    margin-bottom: 0px !important;
+}

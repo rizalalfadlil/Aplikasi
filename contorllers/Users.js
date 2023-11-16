@@ -86,7 +86,18 @@ async function login(req, res) {
     // Jika autentikasi berhasil, Anda bisa menghasilkan token otentikasi
     const token = jwt.sign({ username: user.username }, 'rahasia-kunci', { expiresIn: '1h' });
 
-    res.json({ message: 'Login berhasil', token });
+    res.json({ 
+      message: 'Login berhasil', 
+      data:{
+        id:user.id,
+        username:user.username,
+        role:user.role,
+        grade:user.grade,
+        department:user.department,
+
+      },
+      token 
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Gagal melakukan login.' });

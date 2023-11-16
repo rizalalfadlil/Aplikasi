@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import { DatePicker, Switch, message } from 'antd';
+import { ResourceLink } from "../../../config";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import { Pelajaran } from "./pelajaran";
@@ -22,7 +23,7 @@ export function InsertSesiUjian(props){
 
     const insertExamSession = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/exam-sessions`, {
+        const response = await fetch(`${ResourceLink}/api/exam-sessions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -37,7 +38,8 @@ export function InsertSesiUjian(props){
         })
         // Handle response sesuai kebutuhan Anda
         // Contoh: Jika response.status adalah 200, berarti update berhasil
-        message.success('Berhasil Membuat Data Ujian')
+        message.success('Berhasil Membuat Data Ujian');
+        props.fetchExamSessions();
       } catch (error) {
         console.error('Gagal membuat sesi ujian:', error);
       }
@@ -46,7 +48,7 @@ export function InsertSesiUjian(props){
       const handleUpdate = () => {
         insertExamSession();
         setIsEdited(false); // Setelah update, tutup mode edit
-        window.location.reload();
+        props.fetchExamSessions();
       };
       
     return(
@@ -92,4 +94,4 @@ export function InsertSesiUjian(props){
           </div>
     )
   
-  }
+  } 

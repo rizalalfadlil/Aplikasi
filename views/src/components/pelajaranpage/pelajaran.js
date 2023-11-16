@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Statistic } from "antd";
+import { Statistic, message } from "antd";
 import axios from "axios"; // Import Axios
 import { AnswerOption } from "./component/answeroption";
-import './style.css'
+import './style.css';
+import { ResourceLink } from "../../config";
 import { RightSidebar } from "./component/sidebar";
 const { Countdown } = Statistic;
 const submitTime = 29.9;
@@ -25,6 +26,7 @@ export function HalamanUjian() {
   const [soalList, setSoalList] = useState([]); // Menyimpan daftar soal
   const [loading, setLoading] = useState(true);
   const [jawaban, setJawaban] = useState([]);
+  const [namaUjian, setNamaUjian] = useState();
 // Hitung jumlah soal yang telah dijawab
 const jumlahSoalDijawab = jawaban.filter(j => j !== 'x').length;
 
@@ -41,28 +43,38 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
     const updatedJawaban = [...jawaban];
     updatedJawaban[current] = selectedJawaban;
     setJawaban(updatedJawaban);
-    console.log(jawaban);
   };
   const onFinish = () => {
     console.log('finished!');
+    console.log(jawaban);
   };
   useEffect(() => {
-    // Mengambil data soal dari "localhost:8000/contoh-soal"
+    const subjectId = localStorage.getItem('idTugas'); // Ganti dengan ID mata pelajaran yang diinginkan
+    // Mengambil data mata pelajaran dari "http://localhost:8000/api/subjects/:id"
     axios
-      .get("http://localhost:8000/api/contoh-soal")
+      .get(`${ResourceLink}/api/subjects/${subjectId}`)
       .then((response) => {
-        const jumlahSoal = response.data.length;
+        const data = response.data;
+        const parsedQuestion = JSON.parse(data.questions)
+        const jumlahSoal = parsedQuestion.length;
         const jawabanSementara = Array(jumlahSoal).fill('x');
         const soalSementara = Array(jumlahSoal).fill('kosong');
-        setSoalList(response.data);
+        setSoalList(parsedQuestion);
         setJawaban(jawabanSementara);
         setLoading(false);
+        setNamaUjian(data.name)
+        console.log(subjectId);
       })
-      .catch((error) => {
+      .catch((error) => { 
         console.error("Error fetching data:", error);
+        message.error('soal ujian tidak ditemukan').then(() => goBack());
       });
   }, []);
   
+  const goBack = () =>{
+    window.location.href = '/';
+  }
+
   const next = () => {
     if (current < soalList.length - 1) {
       setCurrent(current + 1);
@@ -104,7 +116,9 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
   const toggleEditMode = () => {
     setisEditMode(!isEditMode);
   };
-  
+  const parsedPilihan = (pilihan) =>{
+    return JSON.parse(pilihan);
+  }
   return (
     <div className="appbg">
       <div className="d-flex align-items-center text-end justify-content-end">
@@ -114,7 +128,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
               <div className="fs-5 col">
                 <p className="fs-6 badge fw-light mb-0 text-opacity-50 text-secondary">Nama Ujian</p>
                 <div className="fs-4">
-                <span className="p-2">Nama Pelajaran</span> |{" "}
+                <span className="p-2">{namaUjian}</span> |{" "}
                 <span className="p-2">{current + 1}</span>
                 <button className="btn btn-outline-primary border"
                   onClick={() => {
@@ -137,20 +151,25 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
               <hr className="mt-4 mb-4" />
               {loading ? (
                 <p>Loading...</p>
-              ) :(<p className={`pt-3 pb-3 fs-` + fontSize}>{soalList[current].pertanyaan}</p>)}
+              ) :(<p
+                className={`danger-html pt-3 pb-3 fs-${fontSize}`}
+                dangerouslySetInnerHTML={{ __html: soalList[current].pertanyaan }}
+              />)}
               <div className={`row mt-5 align-items-stretch g-4`}>
-                {!loading ? ( // Tambahkan kondisi loading
-                  soalList[current].pilihan_jawaban.map((pilihan, index) => (
+                {!loading ? 
+                (
+                  soalList[current].pilihan.map((pilihan, index) => (
                     <AnswerOption
                       isEditMode={isEditMode}
-                      no={pilihan.id_pilihan}
+                      no={pilihan.id}
                       fs={fontSize}
-                      isi={pilihan.isi}
+                      isi={pilihan.text}
                       key={index}
                       jawaban={jawaban[current]}
                       onChange={handleJawabanChange}
                     />
                   ))
+                  
                 ) : (
                   <p>Loading pilihan jawaban...</p> // Tampilkan pesan loading jika sedang dalam proses loading
                 )}
@@ -195,6 +214,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
             visibleSteps={visibleSteps}
             handleFontSizeChange={handleFontSizeChange}
             onChange={onChange}
+            onSubmit={onFinish}
           />
         </div>
       </div>

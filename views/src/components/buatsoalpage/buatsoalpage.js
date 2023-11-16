@@ -1,14 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DatePicker, Popconfirm, message, Pagination, InputNumber } from "antd";
-import RichTextEditor from "./texteditor";
+import TextEditor from "./texteditor";
 import Sidebar from "../mainpage/sidebar";
+import dayjs from "dayjs";
+import { ResourceLink } from "../../config";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
+const showedFormat = 'DD-MM-YYYY hh:mm:ss';
 
 export const BuatSoal = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [jumlahPilihan, setJumlahPilihan] = useState(4);
+  const [judul, setJudul] = useState(null);
+  const [idUjian, setIdUjian] = useState(0);
+  const [namaUjian, setNamaUjian] = useState('????');
+  const [startTime, setStartTime] = useState(null);
+  const [deadline, setDeadline] = useState('???');
   const [soalList, setSoalList] = useState([]);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const soalPerPage = 3; // Jumlah soal per halaman
+  const soalPerPage = 5; // Jumlah soal per halaman
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * soalPerPage;
   const endIndex = startIndex + soalPerPage;
@@ -19,6 +31,7 @@ export const BuatSoal = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
 
   const tambahSoal = () => {
     if(isConfirmed){
@@ -41,54 +54,92 @@ export const BuatSoal = () => {
   };
   
 const confirm = () =>{
-    setIsConfirmed(true);
+  setIsConfirmed(true);
 }
   const hapusSoal = (id) => {
     const newSoalList = soalList.filter((soal) => soal.id !== id);
     setSoalList(newSoalList);
+    setCurrentPage(Math.ceil(newSoalList.length / soalPerPage));
   };
 
-  const tambahPilihan = (soalId) => {
-    const newSoalList = [...soalList];
-    const soalIndex = newSoalList.findIndex((soal) => soal.id === soalId);
-    const soal = newSoalList[soalIndex];
-    const nextPilihanId = soal.pilihan.length + 1;
-    soal.pilihan.push({ id: nextPilihanId, text: "" });
-    setSoalList(newSoalList);
-  };
+  useEffect(() => {
+    const soal = localStorage.getItem('soal');
+  if(soal){
+    const parsedSoal = JSON.parse(soal);
+    setIdUjian(parsedSoal.id);
+    setNamaUjian(parsedSoal.title);
+    setDeadline(parsedSoal.deadline);
+  }else{
+    message.error('data soal tidak ditemukan, pastikan untuk membuka halaman ini dari tombol tambahkan pelajaran di halaman utama!').then(() => goBack());
+  }
 
-  const hapusPilihan = (soalId, pilihanId) => {
-    const newSoalList = [...soalList];
-    const soalIndex = newSoalList.findIndex((soal) => soal.id === soalId);
-    const soal = newSoalList[soalIndex];
-    soal.pilihan = soal.pilihan.filter((pilihan) => pilihan.id !== pilihanId);
-    setSoalList(newSoalList);
-  };
-const showSoalList = () =>{
-    console.log(soalList);
+  }, []);
+const goBack = () =>{
+  window.location.href = '/';
 }
+const KirimSoal = async () => {
+  if(judul && startTime){
+    try {
+      const data = {
+        name: judul,
+        questions: soalList,
+        startTime: startTime,
+        submissionDeadline: deadline,
+        examSessionId: idUjian.toString(),
+      };
+  
+      console.log(data);
+      const apiUrl = (ResourceLink + "/api/subjects");
+  
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+  
+      const responseData = await response.json();
+      console.log("Data berhasil dikirim:", responseData);
+      message.success("Berhasil Membuat Soal").then(() => goBack());
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  }else if(!judul)message.warning('isi judul terlebih dahulu!');
+   else if(!startTime)message.warning('isi waktu mulai terlebih dahulu');
+};
+
+  
   return (
-    <div className="container border mt-5 rounded-5">
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} openSidebar={setIsSidebarOpen} />
+    <div className="d-flex">
+      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} openSidebar={setIsSidebarOpen} />
+      <div className="container border mt-5 mb-5 h-25 rounded-5">
       <div className="row">
       <h4 className="mt-5 mb-5">Buat Soal</h4>
-      <button onClick={showSoalList}>show</button>
             <div className="row">
-                <div className="col-9">
+                <div className="col-6">
                     <span className="p-2">Soal Untuk</span>
-                    <input value='ujian 1' disabled className="text-center form-control rounded-pill"/>
+                    <input value={namaUjian} disabled className="text-center form-control rounded-pill"/>
                 </div>
                 <div className="col-3">
                 <span className="p-2">id ujian</span>
-                    <input value='01' disabled className=" text-center form-control rounded-pill"/>
+                    <input value={idUjian} disabled className=" text-center form-control rounded-pill"/>
+                </div>
+                <div className="col-3">
+                <span className="p-2">deadline</span>
+                    <input value={dayjs(deadline).format(showedFormat)} disabled className=" text-center form-control rounded-pill"/>
                 </div>
                 <div className="col-9 mt-2">
                     <span className="p-2">Nama Pelajaran</span>
-                    <input className="text-center border w-100 p-1 rounded-pill" placeholder="masukkan judul"/>
+                    <input className="text-center border w-100 p-1 rounded-pill" defaultValue={judul} placeholder="masukkan judul" onChange={(event) => setJudul(event.target.value)}/>
                 </div>
                 <div className="col-3 mt-2">
                     <span className="p-2">Waktu Mulai</span>
-                    <div className="border rounded-pill"><DatePicker showTime bordered={false} placeholder="pilih waktu mulai" className="w-100"/></div>
+                    <div className="border rounded-pill"><DatePicker showTime bordered={false} defaultValue={startTime} onChange={setStartTime} placeholder="pilih waktu mulai" className="w-100"/></div>
                 </div>
                 <div className="col-2 mt-3">
                     <span className="p-2">Jumlah Soal</span>
@@ -132,21 +183,21 @@ const showSoalList = () =>{
               />
             </div>
             <hr />
-            <RichTextEditor value={soal.pertanyaan} onChange={(value) => {
+            <TextEditor value={soal.pertanyaan} onChange={(value) => {
               const newSoalList = [...soalList];
-              newSoalList[((currentPage - 1) * soalPerPage) + soalIndex + 1].pertanyaan = value;
+              newSoalList[((currentPage - 1) * soalPerPage) + soalIndex].pertanyaan = value;
               setSoalList(newSoalList);
             }} />
             <hr />
-            <span>Pilihan Jawaban (masukkan jawaban yang benar di pilihan berwarna biru)</span>
+            <span>Pilihan Jawaban</span>
             <div>
               {soal.pilihan.map((pilihan, pilihanIndex) => (
                 <div className="border border-primary border-opacity-50 rounded-5 p-2 mt-3" key={pilihan.id}>
-                  <RichTextEditor
+                  <TextEditor
                     value={pilihan.text}
                     onChange={(value) => {
                       const newSoalList = [...soalList];
-                      newSoalList[((currentPage - 1) * soalPerPage) + soalIndex + 1].pilihan[pilihanIndex].text = value;
+                      newSoalList[((currentPage - 1) * soalPerPage) + soalIndex].pilihan[pilihanIndex].text = value;
                       setSoalList(newSoalList);
                     }}
                   />
@@ -164,13 +215,22 @@ const showSoalList = () =>{
         />
 
         </div>
+        <div className="row p-3 gap-3">
         <button
-            className={`btn btn-${isConfirmed?'primary':'secondary'} p-2 mt-4 mb-4 w-100 rounded-pill`}
+            className={`col-2 btn btn-${isConfirmed?'primary':'secondary'} rounded-pill`}
             onClick={tambahSoal}
           >
             Tambah Soal
         </button>
+        <button
+            className={`col-2 btn btn-primary d-${isConfirmed && soalList.length > 0?'block':'none'} rounded-pill`}
+            onClick={KirimSoal}
+          >
+            Kirim
+        </button>
+        </div>
       </div>
+    </div>
     </div>
   );
 };

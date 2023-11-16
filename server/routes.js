@@ -25,6 +25,7 @@ router.delete('/api/exam-sessions/:id', examSessionController.deleteExamSession)
 // Rute untuk mata pelajaran (Subjects)
 router.post('/api/subjects', subjectController.createSubject);
 router.get('/api/subjects', subjectController.getSubjects);
+router.get('/api/subjects/:id', subjectController.getSubjectById);
 router.put('/api/subjects/:id', subjectController.updateSubject);
 router.delete('/api/subjects/:id', subjectController.deleteSubject);
 

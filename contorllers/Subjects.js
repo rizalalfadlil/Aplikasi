@@ -17,7 +17,7 @@ async function createSubject(req, res) {
       questions,
       submissionDeadline,
       startTime,
-      ExamSessionId: examSession.id // Mengaitkan mata pelajaran dengan sesi ujian
+      examSessionId: examSession.id // Mengaitkan mata pelajaran dengan sesi ujian
     });
 
     res.status(201).json(newSubject);
@@ -37,6 +37,24 @@ async function getSubjects(req, res) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Gagal mengambil daftar mata pelajaran.' });
+  }
+}
+async function getSubjectById(req, res) {
+  const subjectId = req.params.id;
+
+  try {
+    const subject = await Subject.findByPk(subjectId, {
+      include: ExamSession // Mengambil data sesi ujian terkait dengan mata pelajaran
+    });
+
+    if (!subject) {
+      return res.status(404).json({ error: 'Mata pelajaran tidak ditemukan.' });
+    }
+
+    res.json(subject);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Gagal mengambil data mata pelajaran.' });
   }
 }
 
@@ -93,6 +111,7 @@ async function deleteSubject(req, res) {
 module.exports = {
   createSubject,
   getSubjects,
+  getSubjectById,
   updateSubject,
   deleteSubject,
 };

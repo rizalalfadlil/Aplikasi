@@ -1,10 +1,19 @@
 import React, {useState} from "react";
-export const CreatePelajaran = () =>{
+export const CreatePelajaran = (props) =>{
+  const Create = () =>{
+    window.location.href = "/create-soal";
+    localStorage.setItem('soal',JSON.stringify({
+      id:props.id,
+      title:props.title,
+      deadline:props.deadline
+    }))
+  }
     return(
-      <div className='rounded-pill btn btn-outline-primary col-12'>
-          <div className='justify-content-center h-100 d-flex align-items-center text-center'>
+      <button 
+      className='rounded-pill btn btn-primary p-3 col-12'
+      onClick={Create}
+      >
           <b className='pt-2 pb-2'>Tambahkan Data</b>
-        </div>
-        </div>
+      </button>
     )
   }

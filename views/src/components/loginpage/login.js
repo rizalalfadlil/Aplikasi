@@ -5,8 +5,9 @@ import './style.css';
 import 'font-awesome/css/font-awesome.min.css';
 import { ListGroup } from 'react-bootstrap';
 import axios from 'axios'; // Import axios
+import { ResourceLink } from '../../config';
 const Login = () => {
-  localStorage.removeItem('notification')
+  localStorage.removeItem('user');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -21,13 +22,13 @@ const Login = () => {
 
     try {
       // Mengirim permintaan POST ke server
-      const response = await axios.post('http://localhost:8000/api/login', loginData);
+      const response = await axios.post(ResourceLink + '/api/login', loginData);
 
       // Tangani respons dari server sesuai dengan kebutuhan Anda
       if (response.status === 200) {
         message.success(response.data.message);
-        
-        window.location.href = "/";
+        localStorage.setItem('user', JSON.stringify(response.data.data));
+        window.location.href = '/';
         //localStorage.setItem('notification', JSON.stringify({message:'notifikasi', type:'success'}))
       } else {
         // Login gagal, tampilkan pesan kesalahan atau tindakan lainnya.
