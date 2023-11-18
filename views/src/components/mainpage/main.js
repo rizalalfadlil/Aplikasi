@@ -11,15 +11,8 @@ export function MainPage() {
   localStorage.removeItem('soal');
   localStorage.removeItem('idTugas');
   localStorage.removeItem('deadline');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [examSessions, setExamSessions] = useState([]);
   const [subjects, setSubjects] = useState([]);
-
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
   useEffect(() => {
     // Mengambil data dari API
     fetch(ResourceLink + '/api/exam-sessions')
@@ -71,7 +64,7 @@ const testUser = () =>{
 }
   return (
     <div className="App text-start d-flex">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} openSidebar={setIsSidebarOpen} />
+      <Sidebar/>
       <div className='container text-dark h-100'>
         <div className='row m-2 mt-5'>
           <h1 className='text-start col-8'>Halaman Utama</h1>

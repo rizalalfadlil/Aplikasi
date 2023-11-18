@@ -1,11 +1,9 @@
 const User = require('./models/Users.js'); // Sesuaikan dengan lokasi model Anda
 
 User.create({
-    username: 'username',
-    password: 'password',
-    role: 'Siswa',
-    class: 'Kelas X',
-    department: 'Jurusan IPA',
+    username: 'guru',
+    password: 'g',
+    role: 'Guru',
   }).then(user => {
     console.log('Data pengguna berhasil dimasukkan:', user);
   }).catch(error => {

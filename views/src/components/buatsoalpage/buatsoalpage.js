@@ -11,7 +11,6 @@ const showedFormat = 'DD-MM-YYYY hh:mm:ss';
 
 export const BuatSoal = () => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [jumlahPilihan, setJumlahPilihan] = useState(4);
   const [judul, setJudul] = useState(null);
   const [idUjian, setIdUjian] = useState(0);
@@ -28,10 +27,6 @@ export const BuatSoal = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
 
   const tambahSoal = () => {
     if(isConfirmed){
@@ -116,7 +111,7 @@ const KirimSoal = async () => {
   
   return (
     <div className="d-flex">
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} openSidebar={setIsSidebarOpen} />
+      <Sidebar/>
       <div className="container border mt-5 mb-5 h-25 rounded-5">
       <div className="row">
       <h4 className="mt-5 mb-5">Buat Soal</h4>
