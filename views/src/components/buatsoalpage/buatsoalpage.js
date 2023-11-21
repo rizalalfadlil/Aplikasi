@@ -143,16 +143,19 @@ const KirimSoal = async () => {
                 <div className="col-2 mt-3">
                     <span className="p-2">Jumlah Pilihan</span>
                     <div className="d-flex">
-                    <InputNumber
-                        defaultValue={jumlahPilihan}
-                        type="number"
-                        onChange={setJumlahPilihan}
-                        className={`text-center form-control bg-secondary bg-opacity-10 rounded-${isConfirmed?'':'start-'}pill`}
-                        disabled={isConfirmed}
-                        size="small"
-                    />
-                    {isConfirmed?'':
+                    {isConfirmed?(
+                      <input value={jumlahPilihan} disabled className="text-center form-control rounded-pill"/>
+                    ):
                     (
+                      <>
+                    <InputNumber
+                      defaultValue={jumlahPilihan}
+                      type="number"
+                      onChange={setJumlahPilihan}
+                      className={`text-center form-control bg-secondary bg-opacity-10 rounded-start-pill`}
+                      style={{textAlign:'center'}}
+                      size="small"
+                  />
                     <Popconfirm
                     title='Konfirmasi Jumlah pilihan?'
                     description='setelah jumlah pilihan ditetapkan, tidak akan bisa diubah lagi'
@@ -161,6 +164,7 @@ const KirimSoal = async () => {
                     onConfirm={confirm}>
                         <button className="btn btn-outline-primary rounded-end-pill border">Konfirmasi</button>
                     </Popconfirm>
+                  </>
                     )}
                     </div>
                 </div>

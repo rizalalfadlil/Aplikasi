@@ -6,6 +6,8 @@ import { HalamanUjian } from "./pelajaranpage/pelajaran";
 import { BuatSoal } from "./buatsoalpage/buatsoalpage";
 import { MainSiswa } from "./mainpagesiswa/main";
 import { Main } from "./pagenavigator";
+import { AccountTable } from "./buatakunsiswapage/buatakun";
+import { Empty, Layout } from "antd";
 export const AppRoute = () => {
     return(
     <BrowserRouter>
@@ -15,7 +17,19 @@ export const AppRoute = () => {
             <Route path="/pelajaran" Component={HalamanUjian}/>
             <Route path="/create-soal" Component={BuatSoal}/>
             <Route path="/siswa" Component={MainSiswa}/>
+            <Route path="*" Component={EmptyPage}/>
+            <Route path="/create-account" Component={AccountTable}/>
         </Routes>
     </BrowserRouter>
+    )
+}
+const EmptyPage = () =>{
+    return(
+        <Layout
+        className="d-flex align-items-center justify-content-center"
+        style={{height:'100vh'}}>
+            <Empty description='Tidak Ada apa apa disini'/>
+            <a className="btn btn-outline-secondary my-3 rounded-pill" href="/">Ke halaman utama</a>
+        </Layout>
     )
 }

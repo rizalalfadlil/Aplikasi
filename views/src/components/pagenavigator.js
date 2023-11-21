@@ -3,6 +3,9 @@ import { MainPage } from "./mainpage/main";
 import { MainSiswa } from "./mainpagesiswa/main";
 
 export const Main = () => {
+  localStorage.removeItem('soal');
+  localStorage.removeItem('idTugas');
+  localStorage.removeItem('deadline');  
   const [userType, setUserType] = useState('Tipe Akun');
 
   useEffect(() => {
@@ -18,7 +21,7 @@ export const Main = () => {
 
   return (
     <div>
-      {userType === 'Guru' ? <MainPage /> : <MainSiswa />}
+      {userType === 'guru' ? <MainPage /> : <MainSiswa />}
     </div>
   );
 };

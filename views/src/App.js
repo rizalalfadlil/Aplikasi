@@ -8,10 +8,7 @@ function App() {
     maxCount: 1,
   });
   return (
-    <>
-    <Notification/>
-    <AppRoute/>
-    </>
+    <AppRoute />
   );
 }
 

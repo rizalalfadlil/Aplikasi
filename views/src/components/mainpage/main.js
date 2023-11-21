@@ -8,9 +8,6 @@ import { SesiUjian } from './ujian/sesiujian';
 import { InsertSesiUjian } from './ujian/buatsesiujian';
 import { ResourceLink } from '../../config';
 export function MainPage() {
-  localStorage.removeItem('soal');
-  localStorage.removeItem('idTugas');
-  localStorage.removeItem('deadline');
   const [examSessions, setExamSessions] = useState([]);
   const [subjects, setSubjects] = useState([]);
   useEffect(() => {

@@ -14,7 +14,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  class: {
+  grade: {
     type: DataTypes.STRING, // Kelas Siswa (Opsional)
   },
   department: {

@@ -1,5 +1,6 @@
 import React, {useState} from "react";
-import { DatePicker, Popconfirm, Switch, message } from 'antd';
+import { DatePicker, Popconfirm, Switch, message, Dropdown, Modal } from 'antd';
+import { MoreOutlined, SendOutlined } from '@ant-design/icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ResourceLink } from "../../../config";
 import 'font-awesome/css/font-awesome.min.css';
@@ -13,6 +14,7 @@ dayjs.extend(customParseFormat);
 const showedFormat = 'DD-MM-YYYY';
 export function SesiUjian(props){
     const [editedJudul, setEditedJudul] = useState(props.judul);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [editedStrictMode, setEditedStrictMode] = useState(props.strictMode);
     const [editedStartTime, setEditedStartTime] = useState(dayjs(props.startTime)); // Gunakan null jika data awal adalah null atau set sesuai kebutuhan
     const [editedSubmissionDeadline, setEditedSubmissionDeadline] = useState(dayjs(props.submissionDeadline)); // Gunakan null jika data awal adalah null atau set sesuai kebutuhan
@@ -21,6 +23,17 @@ export function SesiUjian(props){
     const toggleEdit = () =>{
       setIsEdited(!isEdited)
     }
+    const showModal = () => {
+      setIsModalOpen(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalOpen(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalOpen(false);
+    };
     const updateExamSession = async () => {
         try {
           const response = await fetch(`${ResourceLink}/api/exam-sessions/${props.id}`, {
@@ -99,9 +112,23 @@ export function SesiUjian(props){
         setIsEdited(false); // Setelah update, tutup mode edit
         props.fetchExamSessions();
       };
+      const items = [
+        {
+          label: (
+            <button onClick={isEdited?handleUpdate:toggleEdit} className='bg-transparent text-primary'><i className={`fa fa-${isEdited?'paper-plane':'pencil'} me-2`}/>{isEdited?'simpan':'edit'}</button>
+          ),
+          key: '0',
+        },
+        {
+          label: (
+            <button onClick={isEdited?toggleEdit:showModal} className='bg-transparent text-danger'><i className={`fa fa-${isEdited?'times':'trash'} me-2`}/>{isEdited?'batal':'hapus'}</button>
+          ),
+          key: '1',
+        },
+      ];
       
     return(
-  <div className={`rounded-5 border m-3 col-12 col-sm${isEdited?'-12 ':'-12'} p-4 bg-light animated text-dark row`}>
+  <div className={`rounded-5 border m-3 col-12  p-4 bg-light animated text-dark row`}>
             <ul type='none' className='col-8'>
               {isEdited?
               (
@@ -134,19 +161,18 @@ export function SesiUjian(props){
               </>
               )}
             </ul>
-            <div className='col justify-content-end d-flex'>
+            <div className='col justify-content-end  align-items-start d-flex'>
             <div className='align-items-end w-10 btn-group-vertical'>
-            <button className={`btn fa fa-${isEdited ? 'check' : 'pencil'} rounded-pill edit-button`} onClick={isEdited ? handleUpdate : toggleEdit} />
-            <Popconfirm
-            title={isEdited?'Keluar Dari Mode Edit?':'Yakin ingin Menghapus Data ini?'}
-            description={isEdited?'Perubahan Belum Tersimpan':'Data tidak akan bisa dikembalikan lagi'}
-            onConfirm={isEdited?toggleEdit : deleteExamSession}
-            placement="left"
-            okButtonProps={({classNames:'rounded-pill border'})}
-            cancelText='batal'
-                  >
-            <button className={`btn fa fa-${isEdited?'times':'trash'} rounded-pill edit-button`}/>
-            </Popconfirm>
+            <Dropdown arrow menu={{items}}>
+            {isEdited?(
+              <i className="fa fa-check fs-4 text-primary"/>
+            ):(
+              <MoreOutlined className="fs-4 text-primary"/>
+            )}
+            </Dropdown>
+            <Modal title="Hapus ujian ini?" centered open={isModalOpen} onOk={deleteExamSession} onCancel={handleCancel}  cancelText='batal'>
+              <p>Data yang dihapus tidak akan bisa dikembalikan lagi</p>
+            </Modal>
             </div>
             </div>
             {isEdited?

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Statistic, message } from "antd";
+import { Statistic, message, Skeleton } from "antd";
 import axios from "axios"; // Import Axios
 import { AnswerOption } from "./component/answeroption";
 import './style.css';
 import { ResourceLink } from "../../config";
 import { RightSidebar } from "./component/sidebar";
+import { LoadingOutlined } from "@ant-design/icons";
 const { Countdown } = Statistic;
 const submitTime = 29.9;
 const time = 30;
@@ -38,18 +39,67 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
     newVisibleSteps[index] = true;
     setVisibleSteps(newVisibleSteps);
   };
-
   const handleJawabanChange = (selectedJawaban) => {
     const updatedJawaban = [...jawaban];
     updatedJawaban[current] = selectedJawaban;
     setJawaban(updatedJawaban);
   };
+  function htmlToPlainText(htmlString) {
+    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
+    return doc.body.textContent || "";
+  }
   const onFinish = () => {
-    console.log('finished!');
-    console.log(jawaban);
+     // Buat variabel untuk menyimpan jawaban dalam format JSON
+     const collectedJawaban = [];
+
+     // Iterasi melalui array soalList
+     for (let i = 0; i < soalList.length; i++) {
+       const jawabanValue = jawaban[i] || ''; // Menggunakan jawaban yang ada, atau string kosong jika tidak ada
+       const pertanyaanText = soalList[i].pertanyaan; // Tekst pertanyaan
+       const chosenAnswerText = soalList[i].pilihan.find(pilihan => pilihan.id === jawabanValue)?.text || ''; // Text of the chosen answer
+ 
+       // JSON object yang berisi pertanyaan, jawaban, dan teks jawaban yang dipilih
+       const jawabanObject = {
+         pertanyaan: htmlToPlainText(pertanyaanText),
+         jawaban: htmlToPlainText(chosenAnswerText),
+       };
+ 
+       collectedJawaban.push(jawabanObject);
+     }
+
+    const dataUser = JSON.parse(localStorage.getItem('user'));
+    const dataJawaban = {
+      username: dataUser.username,
+      userId:dataUser.id,
+      pelajaran:namaUjian,
+      pelajaranId:localStorage.getItem('idTugas'),
+      answer:collectedJawaban
+
+    }
+    console.log("Jawaban yang dikumpulkan:", dataJawaban);
+    SendJawaban(dataJawaban);
+
   };
+  const SendJawaban = async (data) => {
+    console.log('data yang dikirimkan' + JSON.stringify(data));
+    try {
+      const response = await fetch(`${ResourceLink}/api/student-answers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      message.success('Berhasil menyelesaikan Ujian');
+      console.log('berhasil dikirimkan');
+    } catch (error) {
+      console.error('Gagal mengirim jawaban', error);
+    }
+  };
+  
   useEffect(() => {
-    const subjectId = localStorage.getItem('idTugas'); // Ganti dengan ID mata pelajaran yang diinginkan
+    const subjectId = localStorage.getItem('idTugas');
+     // Ganti dengan ID mata pelajaran yang diinginkan
     // Mengambil data mata pelajaran dari "http://localhost:8000/api/subjects/:id"
     axios
       .get(`${ResourceLink}/api/subjects/${subjectId}`)
@@ -63,7 +113,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
         setJawaban(jawabanSementara);
         setLoading(false);
         setNamaUjian(data.name)
-        console.log(subjectId);
       })
       .catch((error) => { 
         console.error("Error fetching data:", error);
@@ -92,7 +141,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
   
         collectedJawaban.push(nomorJawaban);
       }
-      
       // Tampilkan hasilnya di console.log
       console.log("Jawaban yang dikumpulkan:", collectedJawaban);
     }
@@ -119,6 +167,11 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
   const parsedPilihan = (pilihan) =>{
     return JSON.parse(pilihan);
   }
+  const getAnswerText = (answerId, pilihan) => {
+    const selectedAnswer = pilihan.find((pilihan) => pilihan.id === answerId);
+    return selectedAnswer ? selectedAnswer.text : '';
+  };
+  
   return (
     <div className="appbg">
       <div className="d-flex align-items-center text-end justify-content-end">
@@ -145,12 +198,12 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
                 </button>
                 </div>
               </div>
-              <div className="col-1">
+              <div className="col-3 col-lg-2">
               <Countdown title="waktu tersisa" value={deadline} onFinish={onFinish} />
               </div>
               <hr className="mt-4 mb-4" />
               {loading ? (
-                <p>Loading...</p>
+                <Skeleton/>
               ) :(<p
                 className={`danger-html pt-3 pb-3 fs-${fontSize}`}
                 dangerouslySetInnerHTML={{ __html: soalList[current].pertanyaan }}
@@ -158,6 +211,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
               <div className={`row mt-5 align-items-stretch g-4`}>
                 {!loading ? 
                 (
+                  
                   soalList[current].pilihan.map((pilihan, index) => (
                     <AnswerOption
                       isEditMode={isEditMode}
@@ -171,7 +225,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
                   ))
                   
                 ) : (
-                  <p>Loading pilihan jawaban...</p> // Tampilkan pesan loading jika sedang dalam proses loading
+                  <p><LoadingOutlined className="me-2"/>Loading pilihan jawaban</p> // Tampilkan pesan loading jika sedang dalam proses loading
                 )}
               </div>
 

@@ -88,7 +88,7 @@ export function InsertSesiUjian(props){
             <button type="button" onClick={handleUpdate} className="btn fa fa-check edit-button"/>
             <button type="button" onClick={toggleEdit} className="btn fa fa-times edit-button"/>
             </>)
-            :(<button type="button" onClick={toggleEdit} className="btn btn-primary badge rounded-pill">Tambah Data <i className="fa fa-plus p-2"/></button>)}
+            :(<button type="button" onClick={toggleEdit} className="btn btn-primary badge rounded-pill px-3">Tambah Data <i className="fa fa-plus p-2"/></button>)}
             </div>
             </div>
           </div>

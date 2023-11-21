@@ -46,11 +46,16 @@ function Sidebar() {
           <h2>{username}</h2>
           <span>{userType} | {userId} </span>
         </div>
-        <div className='list-group mt-5 bg-transparent text-center w-100 pt-5 p-2'>
+        <div className='list-group mt-5 bg-transparent text-start w-100 pt-5 p-2'>
+        {userType === 'guru' ? (
+          <>
           <SideMenu isSidebarOpen={isSidebarOpen} icon="user" title="Menu 1" link='/'/>
           <SideMenu isSidebarOpen={isSidebarOpen} icon="bars" title="Kerjakan Soal" link='pelajaran'/>
-          <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='login'/>
           <SideMenu isSidebarOpen={isSidebarOpen} icon='pencil' title='buat soal' link='create-soal'/>
+          <SideMenu isSidebarOpen={isSidebarOpen} icon='users' title='buat Akun' link='create-account'/>
+          <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='login'/>
+          </>
+        ) : <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='login'/>}
         </div>
       </div>
     </div>
@@ -61,10 +66,10 @@ function SideMenu(props){
   return(
       <>
       {props.isSidebarOpen?
-      <a type="button" href={props.link} className={`list-group-item pt-3 border-0 align-items-center rounded-pill text-light justify-content-center menu-item list-group-item-action d-flex`}><i className={`fa fa-${props.icon} ${props.isSidebarOpen?'':'show-icon'}`}/><h5 className={`text-nowrap mt-2 overflow-hidden opacity-${props.isSidebarOpen?'100':'0'}`}>{props.title}</h5></a>
+      <a type="button" href={props.link} className={`list-group-item border-0 align-items-center rounded-pill text-light px-4 menu-item list-group-item-action d-flex`}><i className={`fa fa-${props.icon} ${props.isSidebarOpen?'':'show-icon'}`}/><h5 className={`text-nowrap mt-2 overflow-hidden opacity-${props.isSidebarOpen?'100':'0'}`}>{props.title}</h5></a>
       :(
       <Tooltip title={props.title} placement='right' color='blue'>
-        <a type="button" href={props.link} className={`list-group-item pt-3 border-0 align-items-center rounded-pill text-light justify-content-center menu-item list-group-item-action d-flex`}><i className={`fa fa-${props.icon} ${props.isSidebarOpen?'':'show-icon'}`}/><h5 className={`text-nowrap mt-2 overflow-hidden opacity-${props.isSidebarOpen?'100':'0'}`}>{props.title}</h5></a>
+        <a type="button" href={props.link} className={`list-group-item border-0 align-items-center rounded-pill text-light px-2 menu-item list-group-item-action d-flex`}><i className={`fa fa-${props.icon} ${props.isSidebarOpen?'':'show-icon'}`}/><h5 className={`text-nowrap mt-2 overflow-hidden opacity-${props.isSidebarOpen?'100':'0'}`}>{props.title}</h5></a>
       </Tooltip>
       )}
       </>
