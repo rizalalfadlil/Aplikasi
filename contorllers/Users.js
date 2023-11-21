@@ -23,6 +23,22 @@ async function getUsers(req, res) {
     res.status(500).json({ error: 'Gagal mengambil daftar pengguna.' });
   }
 }
+// Operasi Read (R) - Mendapatkan Satu Pengguna
+async function getUser(req, res) {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Pengguna tidak ditemukan.' });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Gagal mengambil pengguna.' });
+  }
+}
 
 // Operasi Update (U)
 async function updateUser(req, res) {
@@ -107,6 +123,7 @@ async function login(req, res) {
 module.exports = {
   createUser,
   getUsers,
+  getUser,
   updateUser,
   deleteUser,
   login,

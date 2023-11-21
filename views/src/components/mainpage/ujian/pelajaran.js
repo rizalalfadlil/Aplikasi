@@ -11,12 +11,14 @@ export function Pelajaran(props) {
     return formattedDate;
   };
 const handleEdit = () =>{
-  const time = 10;
-  const newDeadline = Date.now() + 1000 * time * 60;
   localStorage.setItem('idTugas', props.id.toString())
-  localStorage.setItem('deadline', newDeadline.toString());
+  localStorage.setItem('soal',JSON.stringify({
+    id:props.id,
+    title:props.judulUjian,
+    deadline:props.deadline
+  }))
 
-  window.location.href = "/pelajaran";
+  window.location.href = "/create-soal";
 }
   const handleDelete = async () => {
     try {

@@ -8,6 +8,7 @@ import { MainSiswa } from "./mainpagesiswa/main";
 import { Main } from "./pagenavigator";
 import { AccountTable } from "./buatakunsiswapage/buatakun";
 import { Empty, Layout } from "antd";
+import UserProfile from "./profilpage/userprofile";
 export const AppRoute = () => {
     return(
     <BrowserRouter>
@@ -19,6 +20,7 @@ export const AppRoute = () => {
             <Route path="/siswa" Component={MainSiswa}/>
             <Route path="*" Component={EmptyPage}/>
             <Route path="/create-account" Component={AccountTable}/>
+            <Route path="/user/:id" Component={UserProfile}/>
         </Routes>
     </BrowserRouter>
     )

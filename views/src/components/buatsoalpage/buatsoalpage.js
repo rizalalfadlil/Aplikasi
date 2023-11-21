@@ -2,12 +2,8 @@ import React, { useState, useEffect } from "react";
 import { DatePicker, Popconfirm, message, Pagination, InputNumber } from "antd";
 import TextEditor from "./texteditor";
 import Sidebar from "../mainpage/sidebar";
-import dayjs from "dayjs";
+import axios from "axios";
 import { ResourceLink } from "../../config";
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-
-dayjs.extend(customParseFormat);
-const showedFormat = 'DD-MM-YYYY hh:mm:ss';
 
 export const BuatSoal = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -63,7 +59,24 @@ const confirm = () =>{
     const parsedSoal = JSON.parse(soal);
     setIdUjian(parsedSoal.id);
     setNamaUjian(parsedSoal.title);
-    setDeadline(parsedSoal.deadline);
+    const idTugas = localStorage.getItem('idTugas');
+    if(idTugas){
+        axios
+          .get(`${ResourceLink}/api/subjects/${idTugas}`)
+          .then((response) => {
+            const data = JSON.stringify(response)
+            const parsedData = JSON.parse(data)
+            const dataUjian = parsedData.data;
+            console.log(dataUjian);
+            setJudul(dataUjian.name);
+          })
+          .catch((error) => { 
+            console.error("Error fetching data:", error);
+          });
+      console.log('soal lama');
+    }else{
+      console.log('soal baru');
+    }
   }else{
     message.error('data soal tidak ditemukan, pastikan untuk membuka halaman ini dari tombol tambahkan pelajaran di halaman utama!').then(() => goBack());
   }
@@ -125,8 +138,8 @@ const KirimSoal = async () => {
                     <input value={idUjian} disabled className=" text-center form-control rounded-pill"/>
                 </div>
                 <div className="col-3">
-                <span className="p-2">deadline</span>
-                    <input value={dayjs(deadline).format(showedFormat)} disabled className=" text-center form-control rounded-pill"/>
+                <span className="p-2">deadline(menit)</span>
+                    <input type="number" onChange={(event) => setDeadline(event.target.value)} className=" text-center form-control rounded-pill"/>
                 </div>
                 <div className="col-9 mt-2">
                     <span className="p-2">Nama Pelajaran</span>

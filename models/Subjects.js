@@ -12,7 +12,7 @@ const Subject = sequelize.define('Subject', {
     allowNull: false,
   },
   submissionDeadline: {
-    type: DataTypes.DATE,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   startTime: {

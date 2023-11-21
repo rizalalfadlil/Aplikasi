@@ -20,10 +20,7 @@ export const MainSiswa = () => {
   };
   const handleOk = () => {
     setOpen(false);
-    const time = 10;
-    const newDeadline = Date.now() + 1000 * time * 60;
     localStorage.setItem('idTugas', infoUjian.id.toString());
-    localStorage.setItem('deadline', newDeadline.toString());
     window.location.href = "/pelajaran";
   };
 

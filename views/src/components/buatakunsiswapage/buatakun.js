@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ResourceLink } from '../../config';
 import { Form, Input, Button, Radio, Select, message, Table, Modal } from 'antd';
 import axios from 'axios';
 import Sidebar from '../mainpage/sidebar';
@@ -86,10 +87,15 @@ export const AccountTable = () => {
         }
       };
 
-    useEffect(() => {
-      // Ambil data akun dari server saat komponen dimuat
-      fetchAccounts();
-    }, [fetchAccounts]);
+      useEffect(() => {
+        // Mengambil data dari API
+        fetch( ResourceLink + '/api/users')
+          .then((response) => response.json())
+          .then((data) => setAccounts(data))
+          .catch((error) => {
+            console.error('Error fetching data:', error);
+          });
+      }, []);
   
     const handleDeleteAccount = (accountId) => {
       confirm({
@@ -124,12 +130,18 @@ export const AccountTable = () => {
     ? accounts.filter((account) => account.role === filterRole)
     : accounts;
 
-  
+    const viewAccount = (accountId) =>{
+      window.location.href = 'user/' + accountId;
+    }
     const columns = [
       {
         title: 'Username',
-        dataIndex: 'username',
         key: 'username',
+        render:(record) =>(
+          <button className='bg-transparent p-2 w-100 text-start text-primary' onClick={() => viewAccount(record.id)}>
+            {record.username}
+          </button>
+        )
       },
       {
         title: 'Tipe',
@@ -176,7 +188,7 @@ export const AccountTable = () => {
               style={{ width: 300, marginRight: 10 }}
             />
             <Select
-              placeholder='Filter berdasarkan tipe'
+              placeholder='Tipe Akun'
               style={{ width: 120 }}
               onChange={handleFilterRole}
               allowClear

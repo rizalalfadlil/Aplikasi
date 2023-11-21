@@ -7,10 +7,17 @@ import { ResourceLink } from "../../config";
 import { RightSidebar } from "./component/sidebar";
 import { LoadingOutlined } from "@ant-design/icons";
 const { Countdown } = Statistic;
-const submitTime = 29.9;
-const time = 30;
-export function HalamanUjian() {
 
+export function HalamanUjian() {
+  const [time, setTime] = useState(60);
+  const submitTime = 4.9 ;
+  const [fontSize, setFontSize] = useState(5);
+  const [current, setCurrent] = useState(0);
+  const [isEditMode, setisEditMode] = useState(false);
+  const [soalList, setSoalList] = useState([]); // Menyimpan daftar soal
+  const [loading, setLoading] = useState(true);
+  const [jawaban, setJawaban] = useState([]);
+  const [namaUjian, setNamaUjian] = useState();
   const [deadline, setDeadline] = useState(() => {
     const storedDeadline = localStorage.getItem('deadline');
     if (storedDeadline) {
@@ -20,14 +27,6 @@ export function HalamanUjian() {
       return Date.now() + 1000 * time * 60; // Contoh: 1 jam ke depan
     }
   });
-
-  const [fontSize, setFontSize] = useState(5);
-  const [current, setCurrent] = useState(0);
-  const [isEditMode, setisEditMode] = useState(false);
-  const [soalList, setSoalList] = useState([]); // Menyimpan daftar soal
-  const [loading, setLoading] = useState(true);
-  const [jawaban, setJawaban] = useState([]);
-  const [namaUjian, setNamaUjian] = useState();
 // Hitung jumlah soal yang telah dijawab
 const jumlahSoalDijawab = jawaban.filter(j => j !== 'x').length;
 
@@ -43,6 +42,9 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
     const updatedJawaban = [...jawaban];
     updatedJawaban[current] = selectedJawaban;
     setJawaban(updatedJawaban);
+  
+    // Simpan jawaban di localStorage
+    localStorage.setItem('jawaban', JSON.stringify(updatedJawaban));
   };
   function htmlToPlainText(htmlString) {
     const doc = new DOMParser().parseFromString(htmlString, 'text/html');
@@ -60,8 +62,8 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
  
        // JSON object yang berisi pertanyaan, jawaban, dan teks jawaban yang dipilih
        const jawabanObject = {
-         pertanyaan: htmlToPlainText(pertanyaanText),
-         jawaban: htmlToPlainText(chosenAnswerText),
+         pertanyaan: pertanyaanText,
+         jawaban: chosenAnswerText,
        };
  
        collectedJawaban.push(jawabanObject);
@@ -96,7 +98,9 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
       console.error('Gagal mengirim jawaban', error);
     }
   };
-  
+  const setDeadlineMinute = (m) =>{
+    setTime(m);
+  }
   useEffect(() => {
     const subjectId = localStorage.getItem('idTugas');
      // Ganti dengan ID mata pelajaran yang diinginkan
@@ -111,7 +115,12 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
         const soalSementara = Array(jumlahSoal).fill('kosong');
         setSoalList(parsedQuestion);
         setJawaban(jawabanSementara);
+        const storedJawaban = localStorage.getItem('jawaban');
+        if (storedJawaban) {
+          setJawaban(JSON.parse(storedJawaban));
+        }
         setLoading(false);
+        setDeadlineMinute(data.submissionDeadline);
         setNamaUjian(data.name)
       })
       .catch((error) => { 
@@ -188,13 +197,14 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
                     // Mengubah nilai deadline menjadi waktu saat ini
                     const newDeadline = Date.now() + 1000 * time * 60;
                     setDeadline(newDeadline);
-
+                    localStorage.removeItem('jawaban');
+                    setJawaban(Array(soalList.length).fill('x'));
                     // Simpan nilai baru ke localStorage
                     localStorage.setItem('deadline', newDeadline.toString());
                     window.location.reload()
                   }}
                 >
-                  Reset Timer
+                  Reset
                 </button>
                 </div>
               </div>

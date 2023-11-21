@@ -89,6 +89,8 @@ const testUser = () =>{
                   <Pelajaran
                     key={index}
                     id={subject.id}
+                    idUjian={session.id}
+                    judulUjian={session.name}
                     judul={subject.name}
                     startTime={subject.startTime}
                     submissionDeadline={subject.submissionDeadline}

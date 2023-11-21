@@ -50,12 +50,12 @@ function Sidebar() {
         {userType === 'guru' ? (
           <>
           <SideMenu isSidebarOpen={isSidebarOpen} icon="user" title="Menu 1" link='/'/>
-          <SideMenu isSidebarOpen={isSidebarOpen} icon="bars" title="Kerjakan Soal" link='pelajaran'/>
-          <SideMenu isSidebarOpen={isSidebarOpen} icon='pencil' title='buat soal' link='create-soal'/>
-          <SideMenu isSidebarOpen={isSidebarOpen} icon='users' title='buat Akun' link='create-account'/>
-          <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='login'/>
+          <SideMenu isSidebarOpen={isSidebarOpen} icon="bars" title="Kerjakan Soal" link='/pelajaran'/>
+          <SideMenu isSidebarOpen={isSidebarOpen} icon='pencil' title='buat soal' link='/create-soal'/>
+          <SideMenu isSidebarOpen={isSidebarOpen} icon='users' title='buat Akun' link='/create-account'/>
+          <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='/login'/>
           </>
-        ) : <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='login'/>}
+        ) : <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='/login'/>}
         </div>
       </div>
     </div>
