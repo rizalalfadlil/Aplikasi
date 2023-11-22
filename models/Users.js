@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); // Sesuaikan dengan konfigurasi Anda
-
+//localhost:8000
 const User = sequelize.define('User', {
   username: {
     type: DataTypes.STRING,

@@ -10,7 +10,7 @@ const { Countdown } = Statistic;
 
 export function HalamanUjian() {
   const [time, setTime] = useState(60);
-  const submitTime = 4.9 ;
+  const [submitTime, setSubmitTime] = useState(1);
   const [fontSize, setFontSize] = useState(5);
   const [current, setCurrent] = useState(0);
   const [isEditMode, setisEditMode] = useState(false);
@@ -18,6 +18,7 @@ export function HalamanUjian() {
   const [loading, setLoading] = useState(true);
   const [jawaban, setJawaban] = useState([]);
   const [namaUjian, setNamaUjian] = useState();
+  const [done, setDone] = useState(false);
   const [deadline, setDeadline] = useState(() => {
     const storedDeadline = localStorage.getItem('deadline');
     if (storedDeadline) {
@@ -51,6 +52,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
     return doc.body.textContent || "";
   }
   const onFinish = () => {
+    setDone(true);
      // Buat variabel untuk menyimpan jawaban dalam format JSON
      const collectedJawaban = [];
 
@@ -92,14 +94,17 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
         },
         body: JSON.stringify(data),
       })
-      message.success('Berhasil menyelesaikan Ujian');
+      message.success("Berhasil Menyelesaikan Soal").then(() => goBack());
       console.log('berhasil dikirimkan');
     } catch (error) {
       console.error('Gagal mengirim jawaban', error);
     }
   };
   const setDeadlineMinute = (m) =>{
+    console.log(m);
     setTime(m);
+    setDeadline(Date.now() + 1000 * m * 60);
+    setSubmitTime(m - 0.1);
   }
   useEffect(() => {
     const subjectId = localStorage.getItem('idTugas');
@@ -192,20 +197,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
                 <div className="fs-4">
                 <span className="p-2">{namaUjian}</span> |{" "}
                 <span className="p-2">{current + 1}</span>
-                <button className="btn btn-outline-primary border"
-                  onClick={() => {
-                    // Mengubah nilai deadline menjadi waktu saat ini
-                    const newDeadline = Date.now() + 1000 * time * 60;
-                    setDeadline(newDeadline);
-                    localStorage.removeItem('jawaban');
-                    setJawaban(Array(soalList.length).fill('x'));
-                    // Simpan nilai baru ke localStorage
-                    localStorage.setItem('deadline', newDeadline.toString());
-                    window.location.reload()
-                  }}
-                >
-                  Reset
-                </button>
                 </div>
               </div>
               <div className="col-3 col-lg-2">
@@ -279,6 +270,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
             handleFontSizeChange={handleFontSizeChange}
             onChange={onChange}
             onSubmit={onFinish}
+            done={done}
           />
         </div>
       </div>

@@ -1,25 +1,71 @@
 import React, { useState, useEffect } from "react";
 import { DatePicker, Popconfirm, message, Pagination, InputNumber } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import TextEditor from "./texteditor";
 import Sidebar from "../mainpage/sidebar";
 import axios from "axios";
 import { ResourceLink } from "../../config";
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 export const BuatSoal = () => {
-  const [messageApi, contextHolder] = message.useMessage();
   const [jumlahPilihan, setJumlahPilihan] = useState(4);
   const [judul, setJudul] = useState(null);
   const [idUjian, setIdUjian] = useState(0);
   const [namaUjian, setNamaUjian] = useState('????');
   const [startTime, setStartTime] = useState(null);
-  const [deadline, setDeadline] = useState('???');
+  const [isUpdate, setisUpdate] = useState(false);
+  const [deadline, setDeadline] = useState();
   const [soalList, setSoalList] = useState([]);
+  const [done, setDone] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const soalPerPage = 5; // Jumlah soal per halaman
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * soalPerPage;
   const endIndex = startIndex + soalPerPage;
   const displayedSoal = soalList.slice(startIndex, endIndex);
+  useEffect(() => {
+    const fetchData = async () => {
+      const soal = localStorage.getItem('soal');
+      if (soal) {
+        const parsedSoal = JSON.parse(soal);
+        setIdUjian(parsedSoal.id);
+        setNamaUjian(parsedSoal.title);
+        const idTugas = localStorage.getItem('idTugas');
+        if (idTugas) {
+          try {
+            setisUpdate(true);
+            const response = await axios.get(`${ResourceLink}/api/subjects/${idTugas}`);
+            const dataUjian = response.data;
+            console.log(dataUjian);
+            setJudul(dataUjian.name);
+            setDeadline(parseInt(dataUjian.submissionDeadline));
+            setStartTime(dayjs(dataUjian.startTime));
+            console.log(startTime);
+            if (dataUjian.questions) {
+              const soal = JSON.parse(dataUjian.questions);
+              console.log(soal);
+              setJumlahPilihan(soal[0].pilihan.length)
+              confirm();
+              setSoalList(soal);
+            }
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+          console.log('soal lama');
+        } else {
+          console.log('soal baru');
+        }
+      } else {
+        message.error('data soal tidak ditemukan, pastikan untuk membuka halaman ini dari tombol tambahkan pelajaran di halaman utama!').then(() => goBack());
+      }
+    };
+  
+    fetchData();
+  }, []); // Don't forget the dependency array
+  
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -53,35 +99,6 @@ const confirm = () =>{
     setCurrentPage(Math.ceil(newSoalList.length / soalPerPage));
   };
 
-  useEffect(() => {
-    const soal = localStorage.getItem('soal');
-  if(soal){
-    const parsedSoal = JSON.parse(soal);
-    setIdUjian(parsedSoal.id);
-    setNamaUjian(parsedSoal.title);
-    const idTugas = localStorage.getItem('idTugas');
-    if(idTugas){
-        axios
-          .get(`${ResourceLink}/api/subjects/${idTugas}`)
-          .then((response) => {
-            const data = JSON.stringify(response)
-            const parsedData = JSON.parse(data)
-            const dataUjian = parsedData.data;
-            console.log(dataUjian);
-            setJudul(dataUjian.name);
-          })
-          .catch((error) => { 
-            console.error("Error fetching data:", error);
-          });
-      console.log('soal lama');
-    }else{
-      console.log('soal baru');
-    }
-  }else{
-    message.error('data soal tidak ditemukan, pastikan untuk membuka halaman ini dari tombol tambahkan pelajaran di halaman utama!').then(() => goBack());
-  }
-
-  }, []);
 const goBack = () =>{
   window.location.href = '/';
 }
@@ -97,8 +114,9 @@ const KirimSoal = async () => {
       };
   
       console.log(data);
+
+     if(!isUpdate){
       const apiUrl = (ResourceLink + "/api/subjects");
-  
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -110,10 +128,29 @@ const KirimSoal = async () => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-  
       const responseData = await response.json();
       console.log("Data berhasil dikirim:", responseData);
       message.success("Berhasil Membuat Soal").then(() => goBack());
+     }else{
+      const idTugas = localStorage.getItem('idTugas');
+      const apiUrl = (ResourceLink + "/api/subjects/" + idTugas);
+      const response = await fetch(apiUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const responseData = await response.json();
+      console.log("Data berhasil dikirim:", responseData);
+      setDone(true)
+      message.success("Berhasil Memperbarui Soal").then(() => goBack());
+     }
+
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }
@@ -139,7 +176,7 @@ const KirimSoal = async () => {
                 </div>
                 <div className="col-3">
                 <span className="p-2">deadline(menit)</span>
-                    <input type="number" onChange={(event) => setDeadline(event.target.value)} className=" text-center form-control rounded-pill"/>
+                    <input type="number" onChange={(event) => setDeadline(event.target.value)} defaultValue={deadline} className=" text-center form-control rounded-pill"/>
                 </div>
                 <div className="col-9 mt-2">
                     <span className="p-2">Nama Pelajaran</span>
@@ -237,8 +274,10 @@ const KirimSoal = async () => {
         <button
             className={`col-2 btn btn-primary d-${isConfirmed && soalList.length > 0?'block':'none'} rounded-pill`}
             onClick={KirimSoal}
+            disabled={done}
           >
-            Kirim
+            {isUpdate?'Perbarui':'Kirim'}
+            {done && <LoadingOutlined className="ms-2"/>}
         </button>
         </div>
       </div>

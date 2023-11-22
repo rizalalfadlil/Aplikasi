@@ -57,13 +57,8 @@ async function updateStudentAnswer(req, res) {
       return res.status(404).json({ error: 'Jawaban siswa tidak ditemukan.' });
     }
 
-    const { answer, username, userId, pelajaran, pelajaranId, nilaiUjian } = req.body;
+    const { nilaiUjian } = req.body;
 
-    studentAnswer.answer = answer;
-    studentAnswer.username = username;
-    studentAnswer.userId = userId;
-    studentAnswer.pelajaran = pelajaran;
-    studentAnswer.pelajaranId = pelajaranId;
     studentAnswer.nilaiUjian = nilaiUjian;
 
     await studentAnswer.save();

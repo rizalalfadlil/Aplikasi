@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from "react";
 import { FontSizeChanger } from "./fontSizeChanger";
 import { Steps, ConfigProvider, Progress, Statistic, Popover, Modal, message} from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 const { Step } = Steps;
 const { Countdown } = Statistic;
 const gradient = { '0%': 'rgb(0, 108, 196)', '100%': '#153ec5' };
 export const RightSidebar = (props) => {
     const [waktuTungguTerlewati, setWaktuTungguterlewati] = useState(false);
-    const { fontSize, current, isEditMode, soalList, jawaban, onSubmit, toggleEditMode, handleFontSizeChange, onChange, handleJawabanChange, next, prev, persentaseProgres, submitTime, deadline, toggleStepVisibility, visibleSteps } = props;
+    const { fontSize, current, isEditMode, soalList, jawaban, done, onSubmit, toggleEditMode, handleFontSizeChange, onChange, handleJawabanChange, next, prev, persentaseProgres, submitTime, deadline, toggleStepVisibility, visibleSteps } = props;
     const waitTime = () =>{
       setWaktuTungguterlewati(true);
     }
@@ -38,7 +39,7 @@ export const RightSidebar = (props) => {
             {persentaseProgres < 100 && (
               <li>
                 Selesaikan Semua Soal
-                <Progress percent={persentaseProgres} />
+                <Progress percent={persentaseProgres.toFixed(1)} />
               </li>
             )}
             {!waktuTungguTerlewati && (
@@ -63,7 +64,7 @@ export const RightSidebar = (props) => {
         return doc.body.textContent || "";
       }
     return (
-      <div className={`col-2 gradient2 text-light text-start d-none d-md-block h100vh rsidebar fs-${fontSize}`}>
+      <div className={`col-3 col-xxl-2 gradient2 text-light text-start h100vh rsidebar fs-${fontSize}`}>
         <h5 className="p-4 mt-5 text-center">menu</h5>
         <div className=" p-5 pb-0 pt-0">
           <FontSizeChanger fontSize={fontSize} handleFontSizeChange={handleFontSizeChange} />
@@ -105,6 +106,7 @@ export const RightSidebar = (props) => {
         {waktuTungguTerlewati && persentaseProgres === 100?
          (
             <button
+            disabled={done}
             className={`btn border border-light border-opacity-25 btn-outline-light p-2 rounded-pill w-50`}
             onClick={() => {
                 Modal.confirm({
@@ -127,7 +129,7 @@ export const RightSidebar = (props) => {
 
             >
             Selesai
-            <i className={`fa fa-check p-2`} />
+            {done ? <LoadingOutlined className="ms-4"/> : <i className={`fa fa-check p-2`} />}
             </button>
         ):(
             <Popover content={unlockSubmit} placement="right">

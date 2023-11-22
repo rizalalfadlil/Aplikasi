@@ -13,7 +13,7 @@ export const Buatakun = ({fetchAccounts}) => {
 
   const handleSubmit = async (values) => {
     try {
-      const response = await axios.post('http://localhost:8000/api/users', values);
+      const response = await axios.post( ResourceLink + '/api/users' + values);
       console.log(response.data);
       fetchAccounts()
       message.success('Berhasil Membuat Akun');
@@ -79,7 +79,7 @@ export const AccountTable = () => {
   
     const fetchAccounts = async () => {
         try {
-          const response = await axios.get('http://localhost:8000/api/users');
+          const response = await axios.get(ResourceLink + '/api/users');
           setAccounts(response.data);
         } catch (error) {
           console.error(error);
@@ -106,7 +106,7 @@ export const AccountTable = () => {
         onOk: async () => {
           try {
             // Kirim permintaan hapus akun ke server
-            await axios.delete(`http://localhost:8000/api/users/${accountId}`);
+            await axios.delete(`${ResourceLink}/api/users/${accountId}`);
             message.success('Akun berhasil dihapus.');
             // Perbarui daftar akun setelah menghapus
             fetchAccounts();

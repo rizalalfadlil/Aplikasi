@@ -10,6 +10,8 @@ import dayjs from 'dayjs'
 dayjs.extend(customParseFormat);
 const showedFormat = 'DD-MM hh:mm';
 export const MainSiswa = () => {
+  localStorage.removeItem('deadline');
+  localStorage.removeItem('jawaban');
   const [examSessions, setExamSessions] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [open, setOpen] = useState(false);
@@ -177,7 +179,7 @@ const PelajaranTodo = (props) => {
   return (
     <button className='col-12 text-start bg-transparent col-lg-6 col-xl-4' onClick={() => props.showModal(infoUjian)}>
         <div className='border gradient3r text-light shadow rounded-3'>
-        <h5 className='p-2 bg-light bg-opacity-50 rounded-top-3 position-relative'>{props.pelajaran}<div className='badge border text-danger border-danger mx-3'>Belum Dikerjakan!</div></h5>
+        <h5 className='p-2 bg-light bg-opacity-50 rounded-top-3 position-relative'>{props.pelajaran}</h5>
          <div className='row px-3 pelajaran-siswa'>
             <TitleInfo variable='Waktu' value={props.waktu + ' menit'}/>
             <TitleInfo variable='Jumlah Soal' value={props.soal + ' soal'}/>

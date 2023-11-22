@@ -2,6 +2,7 @@ import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import { Popconfirm, message } from "antd";
+import { ResourceLink } from "../../../config";
 
 export function Pelajaran(props) {
   const formatDate = (timestamp) => {
@@ -13,7 +14,7 @@ export function Pelajaran(props) {
 const handleEdit = () =>{
   localStorage.setItem('idTugas', props.id.toString())
   localStorage.setItem('soal',JSON.stringify({
-    id:props.id,
+    id:props.idUjian,
     title:props.judulUjian,
     deadline:props.deadline
   }))
@@ -23,7 +24,7 @@ const handleEdit = () =>{
   const handleDelete = async () => {
     try {
       // Mengirim permintaan DELETE ke server
-      const response = await fetch(`http://localhost:8000/api/subjects/${props.id}`, {
+      const response = await fetch(`${ResourceLink}/api/subjects/${props.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -50,12 +51,11 @@ const handleEdit = () =>{
   return (
     <div className='bg-light rounded-pill col-12'>
       <div className='row h-100 d-flex align-items-center text-center'>
-        <b className='col-6 pt-2 pb-2'><h4>{props.judul}</h4></b>
+        <b className='col-4 col-md-6 pt-2 pb-2'><h4>{props.judul}</h4></b>
         <span className='col-1 pt-2 pb-2 d-none d-sm-flex'> {props.jumlahSoal} soal</span>
-        <div className='col-1 d-none d-sm-flex'>
+        <div className='col-2 d-none d-sm-flex'>
           <span>{formatDate(props.startTime)}</span>
         </div>
-        <button className='col-1 btn btn-outline-success h-100 d-none d-sm-flex'>Belum Dimulai</button>
         <Popconfirm
         title='Hapus data pelajaran ini?'
         onConfirm={handleDelete}

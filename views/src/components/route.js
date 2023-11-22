@@ -9,6 +9,7 @@ import { Main } from "./pagenavigator";
 import { AccountTable } from "./buatakunsiswapage/buatakun";
 import { Empty, Layout } from "antd";
 import UserProfile from "./profilpage/userprofile";
+import { Nilai } from "./nilaipage/nilai";
 export const AppRoute = () => {
     return(
     <BrowserRouter>
@@ -21,6 +22,7 @@ export const AppRoute = () => {
             <Route path="*" Component={EmptyPage}/>
             <Route path="/create-account" Component={AccountTable}/>
             <Route path="/user/:id" Component={UserProfile}/>
+            <Route path="/nilai-ujian" Component={Nilai}/>
         </Routes>
     </BrowserRouter>
     )

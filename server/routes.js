@@ -6,7 +6,6 @@ const userController = require('../contorllers/Users');
 const examSessionController = require('../contorllers/ExamSession');
 const subjectController = require('../contorllers/Subjects');
 const studentAnswerController = require('../contorllers/StundentAnswer');
-const examResultController = require('../contorllers/ExamResult');
 const contohSoal = require('../contoh-soal'); //berisi const soal=(isi soal berbentuk json)
 
 // Rute untuk pengguna (Users)
@@ -33,12 +32,9 @@ router.delete('/api/subjects/:id', subjectController.deleteSubject);
 // Rute untuk jawaban siswa (StudentAnswers)
 router.post('/api/student-answers', studentAnswerController.createStudentAnswer);
 router.get('/api/student-answers', studentAnswerController.getStudentAnswers);
+router.get('/api/student-answers/:id', studentAnswerController.getStudentAnswer);
+router.put('/api/student-answers/:id', studentAnswerController.updateStudentAnswer);
 router.delete('/api/student-answers/:id', studentAnswerController.deleteStudentAnswer);
-
-// Rute untuk hasil ujian (ExamResults)
-router.post('/api/exam-results', examResultController.createExamResult);
-router.get('/api/exam-results', examResultController.getExamResults);
-router.put('/api/exam-results/:id', examResultController.updateExamResult);
 
 router.get('/api/contoh-soal', (req, res) => {
     res.json(contohSoal);

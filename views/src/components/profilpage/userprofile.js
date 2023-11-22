@@ -19,7 +19,7 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/users/${id}`);
+        const response = await axios.get(`${ResourceLink}/api/users/${id}`);
         setUserData(response.data);
         setLoading(false);
       } catch (error) {
@@ -46,10 +46,6 @@ const UserProfile = () => {
         console.error('Error fetching data:', error);
       });
   }, [id]);
-  
-const testData = () =>{
-  console.log(answers);
-}
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -58,11 +54,15 @@ const testData = () =>{
     return <p>User not found</p>;
   }
 
+  const nilaiUjian = (props) =>{
+    localStorage.setItem('nilai', props);
+    localStorage.setItem('userData', JSON.stringify(userData));
+    window.location.href = '/nilai-ujian';
+  }
   return (
     <div className='d-flex'>
       <Sidebar/>
       <div className='container shadow-sm my-5 border rounded-5 p-5'>
-        <button onClick={testData}>test</button>
       <h1 className=''>User Profile</h1>
       <div className='row'>
       <div className='my-3 col-12'>
@@ -96,16 +96,15 @@ const testData = () =>{
             {answers.map((answer, index) =>(
             <div className='border my-2 rounded-pill row'>
               <div className='border-end col-1 p-2 d-flex justify-content-center align-items-center'>{index + 1}</div>
-              <div className='col-2 p-2 d-flex justify-content-center align-items-center border-end'>{answer.pelajaran}</div>
-              <div className='col-2 p-2 d-flex justify-content-center align-items-center border-end'>{answer.username}</div>
-              <div className='col-2 p-2 text-center border-end'>{dayjs(answer.createdAt).format(showedFormat)}</div>
+              <div className='col-4 p-2 d-flex justify-content-center align-items-center border-end'>{answer.pelajaran}</div>
+              <div className='col-2 d-none d-md-block p-2 text-center border-end'>{dayjs(answer.createdAt).format(showedFormat)}</div>
               {answer.nilaiUjian !== null?
               (
-                <div className='col-1 p-2 text-center'>{answer.nilaiUjian}</div>
+                <div className='col p-2 d-flex justify-content-center align-items-center text-success fw-bold'>{answer.nilaiUjian}%</div>
               )
               :
               (
-                <button className='col btn btn-outline-primary rounded-end-pill p-2 text-center'>Nilai Sekarang</button>
+                <button className='col btn btn-outline-primary rounded-end-pill p-2 text-center' onClick={() => nilaiUjian(answer.id)}>Nilai Sekarang</button>
               )}
             </div>
           ))
