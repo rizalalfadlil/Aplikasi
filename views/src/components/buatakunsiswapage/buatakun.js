@@ -13,7 +13,7 @@ export const Buatakun = ({fetchAccounts}) => {
 
   const handleSubmit = async (values) => {
     try {
-      const response = await axios.post( ResourceLink + '/api/users' + values);
+      const response = await axios.post( ResourceLink + '/api/users', values);
       console.log(response.data);
       fetchAccounts()
       message.success('Berhasil Membuat Akun');
