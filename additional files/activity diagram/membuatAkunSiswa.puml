@@ -1,0 +1,14 @@
+@startuml
+
+(*) --> "Login sebagai Guru"
+
+if "Guru belum login" then
+  -->[false] "Login sebagai Guru"
+else
+  -->[true] "Pilih Siswa yang Akan Dibuat Akun"
+  --> "Isi Informasi Akun"
+  --> "Simpan Akun"
+  --> "Selesai"
+endif
+
+@enduml

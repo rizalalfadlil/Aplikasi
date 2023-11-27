@@ -1,0 +1,14 @@
+@startuml
+
+(*) --> "Login sebagai Guru"
+
+if "Guru belum login" then
+  -->[true] "Login sebagai Guru"
+else
+  -->[false] "Buat Soal Baru"
+  --> "Tambah Pertanyaan"
+  --> "Tambah Pilihan Jawaban"
+  --> "Selesai"
+endif
+
+@enduml

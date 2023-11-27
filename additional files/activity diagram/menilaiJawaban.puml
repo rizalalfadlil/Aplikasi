@@ -1,0 +1,19 @@
+@startuml
+
+(*) --> "Login sebagai Guru"
+
+if "Guru belum login" then
+  -->[false] "Login sebagai Guru"
+else
+  -->[true] "Melihat Jawaban Siswa"
+  
+  if "Jawaban sudah dinilai?" then
+    -->[true] "Lihat Nilai"
+  else
+    -->[false] "Berikan Nilai"
+  endif
+  
+  --> "Selesai"
+endif
+
+@enduml

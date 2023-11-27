@@ -1,0 +1,15 @@
+@startuml
+
+(*) --> "Login sebagai Siswa"
+
+if "Siswa belum login" then
+  -->[true] "Login sebagai Siswa"
+else
+  -->[false] "Melihat Daftar Soal"
+endif
+
+--> "Pilih Soal"
+--> "Mengerjakan Soal"
+--> "Submit Jawaban"    
+
+@enduml

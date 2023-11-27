@@ -1,0 +1,20 @@
+@startuml
+actor Siswa
+actor Guru
+actor System
+
+usecase "Buat Soal" as buatSoal
+usecase "Kerjakan Soal" as KerjakanSoal
+usecase "Koreksi Jawaban" as koreksiJawaban
+usecase "Lihat Hasil" as lihatHasil
+usecase "Buat Akun Siswa" as BuatAkunSiswa
+
+Siswa --> (KerjakanSoal)
+Guru --> (buatSoal)
+Guru --> (lihatHasil)
+Guru --> (koreksiJawaban)
+System --> (buatSoal)
+System --> (koreksiJawaban)
+System --> (lihatHasil)
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+|User|
+start
+:Login;
+if (isAdmin?) then (yes)
+  :Tambah Pelajaran;
+else (no)
+  :Pilih Pelajaran;
+  :Buka Soal;
+  while (Jawab Soal) is (belum selesai)
+    :Jawab Soal;
+  endwhile (selesai)
+  :Kumpulkan Jawaban;
+  :Lihat Hasil Ujian;
+endif
+stop
+|Admin|
+:Login;
+:Kelola Soal;
+|System|
+fork
+  :Simpan Jawaban;
+fork again
+  :Koreksi Jawaban;
+end fork
+@enduml
