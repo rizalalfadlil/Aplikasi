@@ -14,7 +14,7 @@ export function FontSizeChanger({fontSize, handleFontSizeChange}){
                 checked={fontSize === 4}
                 onChange={handleFontSizeChange}
               />
-              <label className="btn rounded-start-pill btn-outline-primary align-items-center d-flex badge" htmlFor="btnradio1">FS-4</label>
+              <label className="btn rounded-0 rounded-start-3 btn-outline-primary align-items-center d-flex badge" htmlFor="btnradio1">FS-4</label>
               </Tooltip>
               <Tooltip title='h5' color={'blue'}>
               <input
@@ -38,7 +38,7 @@ export function FontSizeChanger({fontSize, handleFontSizeChange}){
                 checked={fontSize === 6}
                 onChange={handleFontSizeChange}
               />
-              <label className="btn rounded-end-pill btn-outline-primary align-items-center d-flex badge" htmlFor="btnradio3">FS-6</label>
+              <label className="btn rounded-end-3 rounded-0 btn-outline-primary align-items-center d-flex badge" htmlFor="btnradio3">FS-6</label>
               </Tooltip>
       </div>
     </div>

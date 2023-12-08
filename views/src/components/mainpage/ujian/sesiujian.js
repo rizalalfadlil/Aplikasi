@@ -128,7 +128,7 @@ export function SesiUjian(props){
       ];
       
     return(
-  <div className={`rounded-5 border m-3 col-12  p-4 bg-light animated text-dark row`}>
+  <div className={`rounded-3 shadow-sm shadow border m-3 col-12  p-4 bg-light animated text-dark row`}>
             <ul type='none' className='col-8'>
               {isEdited?
               (
@@ -177,7 +177,7 @@ export function SesiUjian(props){
             </div>
             {isEdited?
             (
-              <div className='w-100 g-3 row bg-secondary rounded-5 p-3 bg-opacity-10'>
+              <div className='w-100 g-3 row bg-secondary rounded-3 p-3 bg-opacity-10'>
               <div className='row m-2 w-100'>
                 <h5 className='ml-4 mt-2 col'>List Pelajaran</h5>
               </div>

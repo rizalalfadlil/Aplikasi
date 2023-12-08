@@ -7,28 +7,54 @@ import './style.css'; // Import file CSS untuk styling
 import { SesiUjian } from './ujian/sesiujian';
 import { InsertSesiUjian } from './ujian/buatsesiujian';
 import { ResourceLink } from '../../config';
+import axios from 'axios';
 export function MainPage() {
   const [examSessions, setExamSessions] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  useEffect(() => {
-    // Mengambil data dari API
-    fetch(ResourceLink + '/api/exam-sessions')
-      .then((response) => response.json())
-      .then((data) => setExamSessions(data))
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
+  const [students, setStudents] = useState([]);
+  const [teachers, setTeachers] = useState([]);
 
   useEffect(() => {
-    // Mengambil data dari API
-    fetch( ResourceLink + '/api/subjects')
-      .then((response) => response.json())
-      .then((data) => setSubjects(data))
+    // Mengambil data dari API exam-sessions
+    axios.get(ResourceLink + '/api/exam-sessions')
+      .then((response) => setExamSessions(response.data))
       .catch((error) => {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching exam-sessions data:', error);
       });
+
+    // Mengambil data dari API subjects
+    axios.get(ResourceLink + '/api/subjects')
+      .then((response) => setSubjects(response.data))
+      .catch((error) => {
+        console.error('Error fetching subjects data:', error);
+      });
+
+    // Mengambil data siswa dari API users dengan role siswa
+    axios.get(ResourceLink + '/api/users', { params: { role: 'siswa' } })
+      .then((response) => setStudents(response.data))
+      .catch((error) => {
+        console.error('Error fetching students data:', error);
+      });
+
+    // Mengambil semua data user dari API
+    axios.get(ResourceLink + '/api/users')
+      .then((response) => {
+        // Pisahkan data berdasarkan rolenya
+        const allUsers = response.data;
+        const teacherData = allUsers.filter(user => user.role === 'guru');
+        const studentData = allUsers.filter(user => user.role === 'siswa');
+
+        // Setel state untuk guru dan siswa
+        setTeachers(teacherData);
+        setStudents(studentData);
+      })
+      .catch((error) => {
+        console.error('Error fetching users data:', error);
+      });
+
   }, []);
+
+
 
   const fetchExamSessions = async () => {
     try {
@@ -63,14 +89,16 @@ const testUser = () =>{
     <div className="App text-start d-flex">
       <Sidebar/>
       <div className='container text-dark h-100'>
-        <div className='row m-2 mt-5'>
-          <h1 className='text-start col-8'>Halaman Utama</h1>
-          <div className='d-flex col border rounded-pill m-2 bg-light'>
-            <i className='fa fa-search search-icon'/>
-            <input type='text' className='bg-transparent' placeholder='Cari'/>
+        <div className='m-2 mt-5'>
+          <h1 className='text-start'>Halaman Ujian</h1>
+          <div className='row mt-5'>
+            <ItemBox title='jumlah ujian' value={examSessions.length}/>
+            <ItemBox title='jumlah pelajaran' value={subjects.length}/>
+            <ItemBox title='jumlah siswa' value={students.length}/>
+            <ItemBox title='jumlah guru' value={teachers.length}/>
           </div>
         </div>
-        <div className='m-2 text-start rounded-5 mt-5 row d-flex justify-content-center'>
+        <div className='m-2 text-start rounded-5 row d-flex justify-content-center'>
           <h3 className='mt-5'>List Ujian</h3>
           <InsertSesiUjian fetchExamSessions={fetchExamSessions}/>
           
@@ -106,4 +134,12 @@ const testUser = () =>{
       </div>
     </div>
   );
+}
+const ItemBox = (props) => {
+  return (
+    <div className='border p-4 ps-1 fs-5 m-2 rounded-3 shadow-sm bg-light col'>
+      <span className='border border-3 border-primary border-opacity-25 m-3 py-2 px-3 rounded-circle'>{props.value? props.value : '?'}</span>
+      <span className='text-nowrap'>{props.title}</span>
+    </div>
+  )
 }

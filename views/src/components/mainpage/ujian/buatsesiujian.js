@@ -52,7 +52,7 @@ export function InsertSesiUjian(props){
       };
       
     return(
-  <div className={`rounded-5 m-3 col-12 col-sm${isEdited?'-12 border bg-light text-dark p-4':'-12'} row`}>
+  <div className={`rounded-3 ${isEdited?'border bg-light text-dark p-4':' '} row`}>
             <ul type='none' className='col-8'>
               {isEdited?
               (
@@ -88,7 +88,7 @@ export function InsertSesiUjian(props){
             <button type="button" onClick={handleUpdate} className="btn fa fa-check edit-button"/>
             <button type="button" onClick={toggleEdit} className="btn fa fa-times edit-button"/>
             </>)
-            :(<button type="button" onClick={toggleEdit} className="btn btn-primary badge rounded-pill px-3">Tambah Data <i className="fa fa-plus p-2"/></button>)}
+            :(<button type="button" onClick={toggleEdit} className="btn btn-primary p-2 badge rounded-3">Tambah Data <i className="fa fa-plus p-2"/></button>)}
             </div>
             </div>
           </div>

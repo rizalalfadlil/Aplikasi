@@ -10,7 +10,7 @@ export const CreatePelajaran = (props) =>{
   }
     return(
       <button 
-      className='rounded-pill btn btn-primary p-3 col-12'
+      className='rounded-3 btn btn-primary p-3 col-12'
       onClick={Create}
       >
           <b className='pt-2 pb-2'>Tambahkan Data</b>

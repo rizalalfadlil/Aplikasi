@@ -49,7 +49,7 @@ const handleEdit = () =>{
   };
 
   return (
-    <div className='bg-light rounded-pill col-12'>
+    <div className='bg-light rounded-3 col-12'>
       <div className='row h-100 d-flex align-items-center text-center'>
         <b className='col-4 col-md-6 pt-2 pb-2'><h4>{props.judul}</h4></b>
         <span className='col-1 pt-2 pb-2 d-none d-sm-flex'> {props.jumlahSoal} soal</span>
@@ -65,7 +65,7 @@ const handleEdit = () =>{
           <i className='fa fa-trash larger-icon'/>
         </button>
         </Popconfirm>
-        <button onClick={handleEdit} className='col-4 col-sm btn rounded-end-pill btn-outline-primary h-100'>lihat <i className='fa fa-arrow-right'/></button>
+        <button onClick={handleEdit} className='col-4 col-sm btn rounded-end-3 btn-outline-primary h-100'>lihat <i className='fa fa-arrow-right'/></button>
       </div>
     </div>
   );
