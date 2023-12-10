@@ -49,7 +49,7 @@ const handleEdit = () =>{
   };
 
   return (
-    <div className='bg-light rounded-3 col-12'>
+    <div className='bg-light rounded-3 col-12 shadow-sm'>
       <div className='row h-100 d-flex align-items-center text-center'>
         <b className='col-4 col-md-6 pt-2 pb-2'><h4>{props.judul}</h4></b>
         <span className='col-1 pt-2 pb-2 d-none d-sm-flex'> {props.jumlahSoal} soal</span>

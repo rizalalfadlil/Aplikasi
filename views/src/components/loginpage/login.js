@@ -41,10 +41,10 @@ const Login = () => {
   };
 
   return (
-    <>
+    <div className='bg-secondary bg-opacity-10'>
       <LoginComponent handleLogin={handleLogin} setUsername={setUsername} setPassword={setPassword} />
       <HalfScreenOverlay />
-    </>
+    </div>
   );
 };
 
@@ -70,10 +70,10 @@ function Input(props) {
     <div className="form-group">
       <label className="mb-2 mt-2">{props.name}</label>
       <ListGroup horizontal>
-        <ListGroup.Item className="bg-body-tertiary rounded-start-pill">
+        <ListGroup.Item className="bg-light rounded-start-pill">
           <i className={`fa fa-` + props.icon} />
         </ListGroup.Item>
-        <ListGroup.Item className="w-100 bg-body-tertiary rounded-end-pill">
+        <ListGroup.Item className="w-100 bg-light rounded-end-pill">
           <input
             type={props.type}
             name={props.name}

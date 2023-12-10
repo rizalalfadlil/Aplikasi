@@ -8,30 +8,18 @@ const gradient = { '0%': 'rgb(0, 108, 196)', '100%': '#153ec5' };
 export const RightSidebar = (props) => {
     const [waktuTungguTerlewati, setWaktuTungguterlewati] = useState(false);
     const { fontSize, current, isEditMode, soalList, jawaban, done, onSubmit, toggleEditMode, handleFontSizeChange, onChange, handleJawabanChange, next, prev, persentaseProgres, submitTime, deadline, toggleStepVisibility, visibleSteps } = props;
-    const waitTime = () =>{
+    const waitTime = deadline - (submitTime * 1000 * 60);
+    useEffect(() => {
+      if ((waitTime - Date.now()) <= 0) {
+        waktuTungguSelesai();
+      }
+    }, [waitTime]);
+
+    const waktuTungguSelesai = () =>{
+      message.info('Waktu tunggu selesai, kamu bisa menyelesaikan ujianmu sekarang jika sudah mengerjakan semua soal!')
       setWaktuTungguterlewati(true);
     }
-    useEffect(() => {
-        const checkWaktuTerlewati = () => {
-          const currentTime = Date.now();
-          if (currentTime > deadline - submitTime * 1000 * 60) {
-            // Batas waktu telah terlewati, setel waktuTungguTerlewati menjadi true
-            setWaktuTungguterlewati(true);
-            message.info('waktu tunggu terlewati, ujian bisa diselesaikan sekarang jika semua soal sudah dikerjakan!');
-            // Hentikan interval karena kita sudah tidak perlu lagi memeriksanya
-            clearInterval(intervalId);
-          }
-        };
     
-        // Periksa status waktu setiap 1000 milidetik (1 detik)
-        const intervalId = setInterval(checkWaktuTerlewati, 1000);
-    
-        // Hapus interval saat komponen tidak lagi digunakan
-        return () => {
-          clearInterval(intervalId);
-        };
-      }, []);
-
     const unlockSubmit = (
         <>
           <h6 className="mb-2">Syarat Penyelesaian</h6>
@@ -52,7 +40,7 @@ export const RightSidebar = (props) => {
                     }
                   }}
                 >
-                  <Countdown value={deadline - (submitTime * 1000 * 60)} onFinish={waitTime} />
+                  <Countdown value={waitTime} onFinish={waktuTungguSelesai} />
                 </ConfigProvider>
               </li>
             )}

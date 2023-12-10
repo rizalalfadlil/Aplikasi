@@ -9,7 +9,6 @@ import { LoadingOutlined } from "@ant-design/icons";
 const { Countdown } = Statistic;
 
 export function HalamanUjian() {
-  const [time, setTime] = useState(60);
   const [submitTime, setSubmitTime] = useState(1);
   const [fontSize, setFontSize] = useState(5);
   const [current, setCurrent] = useState(0);
@@ -19,15 +18,7 @@ export function HalamanUjian() {
   const [jawaban, setJawaban] = useState([]);
   const [namaUjian, setNamaUjian] = useState();
   const [done, setDone] = useState(false);
-  const [deadline, setDeadline] = useState(() => {
-    const storedDeadline = localStorage.getItem('deadline');
-    if (storedDeadline) {
-      return parseInt(storedDeadline, 10);
-    } else {
-      // Jika tidak ada nilai di localStorage, setel nilai awal di sini
-      return Date.now() + 1000 * time * 60; // Contoh: 1 jam ke depan
-    }
-  });
+  const [deadline, setDeadline] = useState();
 // Hitung jumlah soal yang telah dijawab
 const jumlahSoalDijawab = jawaban.filter(j => j !== 'x').length;
 
@@ -47,10 +38,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
     // Simpan jawaban di localStorage
     localStorage.setItem('jawaban', JSON.stringify(updatedJawaban));
   };
-  function htmlToPlainText(htmlString) {
-    const doc = new DOMParser().parseFromString(htmlString, 'text/html');
-    return doc.body.textContent || "";
-  }
   const onFinish = () => {
     setDone(true);
      // Buat variabel untuk menyimpan jawaban dalam format JSON
@@ -100,40 +87,44 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
       console.error('Gagal mengirim jawaban', error);
     }
   };
-  const setDeadlineMinute = (m) =>{
-    console.log(m);
-    setTime(m);
-    setDeadline(Date.now() + 1000 * m * 60);
-    setSubmitTime(m - 0.1);
-  }
   useEffect(() => {
     const subjectId = localStorage.getItem('idTugas');
-     // Ganti dengan ID mata pelajaran yang diinginkan
-    // Mengambil data mata pelajaran dari "http://localhost:8000/api/subjects/:id"
     axios
       .get(`${ResourceLink}/api/subjects/${subjectId}`)
       .then((response) => {
         const data = response.data;
-        const parsedQuestion = JSON.parse(data.questions)
+        const parsedQuestion = JSON.parse(data.questions);
         const jumlahSoal = parsedQuestion.length;
         const jawabanSementara = Array(jumlahSoal).fill('x');
-        const soalSementara = Array(jumlahSoal).fill('kosong');
+        const soalSementara = Array(jumlahSoal).fill('kosong'); 
+        const storedStartTime = localStorage.getItem('startTime');
+        const storedJawaban = localStorage.getItem('jawaban');
         setSoalList(parsedQuestion);
         setJawaban(jawabanSementara);
-        const storedJawaban = localStorage.getItem('jawaban');
         if (storedJawaban) {
           setJawaban(JSON.parse(storedJawaban));
         }
+        if (storedStartTime) {
+          setDeadline(parseInt(storedStartTime, 10) + 1000 * data.submissionDeadline * 60);
+        } else {
+          setDeadline(Date.now() + 1000 * data.submissionDeadline * 60);
+          localStorage.setItem('startTime', Date.now()); // Simpan waktu awal di localStorage
+        }
+        console.log(localStorage.getItem('startTime') + ' vs ' + Date.now());
+        if((submitTime) >= 0){
+          setSubmitTime(data.submissionDeadline - 0.1);
+        }else{
+          onFinish();
+        }
+        setNamaUjian(data.name);
         setLoading(false);
-        setDeadlineMinute(data.submissionDeadline);
-        setNamaUjian(data.name)
       })
-      .catch((error) => { 
+      .catch((error) => {
         console.error("Error fetching data:", error);
         message.error('soal ujian tidak ditemukan').then(() => goBack());
       });
   }, []);
-  
+
   const goBack = () =>{
     window.location.href = '/';
   }
@@ -185,7 +176,10 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
     const selectedAnswer = pilihan.find((pilihan) => pilihan.id === answerId);
     return selectedAnswer ? selectedAnswer.text : '';
   };
-  
+  const removeLocalStart = () => {
+    localStorage.removeItem('startTime');
+    console.log('removed');
+  }
   return (
     <div className="appbg">
       <div className="d-flex align-items-center text-end justify-content-end">
@@ -202,6 +196,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
               <div className="col-3 col-lg-2">
               <Countdown title="waktu tersisa" value={deadline} onFinish={onFinish} />
               </div>
+              <button onClick={removeLocalStart}>remove start</button>
               <hr className="mt-4 mb-4" />
               {loading ? (
                 <Skeleton/>

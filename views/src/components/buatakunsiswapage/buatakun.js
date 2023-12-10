@@ -31,12 +31,14 @@ export const Buatakun = ({fetchAccounts}) => {
     <div className=''>
         <h2 className='pb-5'>Buat Akun Baru</h2>
         <Form form={form} layout='vertical' onFinish={handleSubmit}>
-          <Form.Item name="username" label="Username" rules={[{ required: true, message: 'Username wajib diisi' }]}>
-            <Input />
+          <div className='row'>
+          <Form.Item name="username" label="Username" className='col-12 col-sm-6' rules={[{ required: true, message: 'Username wajib diisi' }]}>
+            <Input className='rounded-pill'/>
           </Form.Item>
-          <Form.Item name="password" label="Password" rules={[{ required: true, message: 'Password wajib diisi' }]}>
-            <Input.Password />
+          <Form.Item name="password" label="Password" className='col-12 col-sm-6' rules={[{ required: true, message: 'Password wajib diisi' }]}>
+            <Input.Password className='rounded-pill' />
           </Form.Item>
+          </div>
           <Form.Item name="role" label="Tipe" rules={[{ required: true, message: 'Tipe wajib diisi' }]}>
             <Radio.Group onChange={handleRoleChange} value={selectedRole}>
               <Radio value="guru">Guru</Radio>
@@ -44,16 +46,16 @@ export const Buatakun = ({fetchAccounts}) => {
             </Radio.Group>
           </Form.Item>
           {selectedRole === 'siswa' && (
-            <>
-              <Form.Item name="grade" label="Kelas" rules={[{ required: true, message: 'Kelas wajib diisi' }]}>
-                <Select>
+            <div className='row'>
+              <Form.Item name="grade" label="Kelas" className='col-12 col-sm-6' rules={[{ required: true, message: 'Kelas wajib diisi' }]}>
+                <Select className='rounded-pill border' bordered={false}>
                   <Option value="X">X</Option>
                   <Option value="XI">XI</Option>
                   <Option value="XII">XII</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name="department" label="Jurusan" rules={[{ required: true, message: 'Jurusan wajib diisi' }]}>
-                <Select>
+              <Form.Item name="department" label="Jurusan" className='col-12 col-sm-6' rules={[{ required: true, message: 'Jurusan wajib diisi' }]}>
+                <Select className='rounded-pill border' bordered={false}>
                   <Option value="RPL">Rekayasa Perangkat Lunak</Option>
                   <Option value="TKJ">Teknik Komputer dan Jaringan</Option>
                   <Option value="TBSM">Teknik Bengkel dan Sepeda Motor</Option>
@@ -61,10 +63,10 @@ export const Buatakun = ({fetchAccounts}) => {
                   <Option value="TP">Teknik Permesinan</Option>
                 </Select>
               </Form.Item>
-            </>
+            </div>
           )}
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" className='rounded-pill' htmlType="submit">
               Buat Akun
             </Button>
           </Form.Item>
@@ -163,7 +165,7 @@ export const AccountTable = () => {
         key: 'action',
         render: (text, record) => (
           <Button
-            className='btn btn-outline-danger d-flex align-items-center border border-danger border-opacity-25 rounded'
+            className='btn btn-outline-danger d-flex align-items-center border border-danger border-opacity-25 rounded-pill'
             type="danger"
             onClick={() => handleDeleteAccount(record.id)}
           >
@@ -176,7 +178,7 @@ export const AccountTable = () => {
     return (
       <div className='d-flex'>
         <Sidebar />
-        <div className='border rounded-5 container my-5 p-5'>
+        <div className='border rounded-3 container my-5 p-5'>
           <Buatakun fetchAccounts={fetchAccounts} />
           <h1 className='py-5'>Daftar Akun</h1>
           <div className='mb-3'>
@@ -184,12 +186,14 @@ export const AccountTable = () => {
               placeholder='Cari berdasarkan username'
               onSearch={handleSearch}
               bordered={false}
-              className='border rounded bg-transparent'
+              className='border rounded-pill bg-transparent pe-3'
               style={{ width: 300, marginRight: 10 }}
             />
             <Select
               placeholder='Tipe Akun'
               style={{ width: 120 }}
+              bordered={false}
+              className='rounded-pill border'
               onChange={handleFilterRole}
               allowClear
             >

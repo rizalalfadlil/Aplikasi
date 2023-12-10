@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { DatePicker, Popconfirm, message, Pagination, InputNumber } from "antd";
+import { DatePicker, Popconfirm, message, Pagination, InputNumber, Upload } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import TextEditor from "./texteditor";
 import Sidebar from "../mainpage/sidebar";
@@ -162,7 +162,7 @@ const KirimSoal = async () => {
   return (
     <div className="d-flex">
       <Sidebar/>
-      <div className="container border mt-5 mb-5 h-25 rounded-5">
+      <div className="container border mt-5 mb-5 h-25 rounded-3">
       <div className="row">
       <h4 className="mt-5 mb-5">Buat Soal</h4>
             <div className="row">
@@ -223,11 +223,11 @@ const KirimSoal = async () => {
       </div>
       <div>
         {displayedSoal.map((soal, soalIndex) => (
-          <div className="border rounded-5 mt-3 p-4" key={soal.id}>
+          <div className="border rounded-3 shadow-sm mt-3 p-4" key={soal.id}>
             <div className="row">
               <span className="p-3 col-11">No. {((currentPage - 1) * soalPerPage) + soalIndex + 1}</span>
               <button
-                className="btn btn-outline-danger rounded-pill col border fa fa-times"
+                className="btn btn-outline-danger rounded-pill m-3 col border fa fa-times"
                 onClick={() => hapusSoal(soal.id)}
               />
             </div>
@@ -241,7 +241,7 @@ const KirimSoal = async () => {
             <span>Pilihan Jawaban</span>
             <div>
               {soal.pilihan.map((pilihan, pilihanIndex) => (
-                <div className="border border-primary border-opacity-50 rounded-5 p-2 mt-3" key={pilihan.id}>
+                <div className="border shadow-sm rounded-3 p-2 mt-3" key={pilihan.id}>
                   <TextEditor
                     value={pilihan.text}
                     onChange={(value) => {
