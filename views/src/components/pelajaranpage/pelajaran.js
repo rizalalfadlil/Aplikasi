@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Statistic, message, Skeleton } from "antd";
+import { Statistic, message, Skeleton, Image } from "antd";
 import axios from "axios"; // Import Axios
 import { AnswerOption } from "./component/answeroption";
 import './style.css';
@@ -10,6 +10,7 @@ const { Countdown } = Statistic;
 
 export function HalamanUjian() {
   const [submitTime, setSubmitTime] = useState(1);
+  const [idPelajaran, setIdPelajaran] = useState(1)
   const [fontSize, setFontSize] = useState(5);
   const [current, setCurrent] = useState(0);
   const [isEditMode, setisEditMode] = useState(false);
@@ -63,7 +64,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
       username: dataUser.username,
       userId:dataUser.id,
       pelajaran:namaUjian,
-      pelajaranId:localStorage.getItem('idTugas'),
+      pelajaranId:idPelajaran,
       answer:collectedJawaban
 
     }
@@ -89,6 +90,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
   };
   useEffect(() => {
     const subjectId = localStorage.getItem('idTugas');
+    setIdPelajaran(subjectId);
     axios
       .get(`${ResourceLink}/api/subjects/${subjectId}`)
       .then((response) => {
@@ -200,10 +202,14 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
               <hr className="mt-4 mb-4" />
               {loading ? (
                 <Skeleton/>
-              ) :(<p
-                className={`danger-html pt-3 pb-3 fs-${fontSize}`}
+              ) :(<div>
+                <Image width={500} src={`${ResourceLink}/download?filePath=/uploads/${idPelajaran}/${current + 1}/question.png`}/>
+                <p
+                className={`col danger-html pt-3 pb-3 fs-${fontSize}`}
                 dangerouslySetInnerHTML={{ __html: soalList[current].pertanyaan }}
-              />)}
+              />
+              </div>
+              )}
               <div className={`row mt-5 align-items-stretch g-4`}>
                 {!loading ? 
                 (

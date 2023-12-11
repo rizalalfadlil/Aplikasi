@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { DatePicker, Popconfirm, message, Pagination, InputNumber, Upload } from "antd";
+import { DatePicker, Popconfirm, message, Pagination, InputNumber, Upload, Button, Modal, Image } from "antd";
+import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { LoadingOutlined } from "@ant-design/icons";
 import TextEditor from "./texteditor";
 import Sidebar from "../mainpage/sidebar";
@@ -7,12 +8,14 @@ import axios from "axios";
 import { ResourceLink } from "../../config";
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import ImageUploader from "./imageUploader";
 dayjs.extend(customParseFormat);
 
 export const BuatSoal = () => {
   const [jumlahPilihan, setJumlahPilihan] = useState(4);
   const [judul, setJudul] = useState(null);
   const [idUjian, setIdUjian] = useState(0);
+  const [idPelajaran, setIdPelajaran] = useState(null);
   const [namaUjian, setNamaUjian] = useState('????');
   const [startTime, setStartTime] = useState(null);
   const [isUpdate, setisUpdate] = useState(false);
@@ -65,6 +68,31 @@ export const BuatSoal = () => {
     fetchData();
   }, []); // Don't forget the dependency array
   
+  useEffect(() => {
+    const storedIdTugas = localStorage.getItem('idTugas');
+
+    if (storedIdTugas) {
+      // Jika idTugas sudah ada di localStorage, gunakan nilainya
+      setIdPelajaran(storedIdTugas);
+    } else {
+      // Jika tidak, ambil data dari server untuk mendapatkan id tertinggi
+      fetch(`${ResourceLink}/api/subjects`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.length > 0) {
+            // Ambil id tertinggi dan tambahkan 1
+            const highestId = Math.max(...data.map((subject) => subject.id));
+            setIdPelajaran(highestId + 1);
+          } else {
+            // Jika tidak ada data, idTugas dijadikan 1
+            setIdPelajaran(1);
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+        });
+    }
+  }, []);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -93,11 +121,28 @@ export const BuatSoal = () => {
 const confirm = () =>{
   setIsConfirmed(true);
 }
-  const hapusSoal = (id) => {
+const hapusSoal = async (id) => {
+  try {
+    // Menghapus soal dari state lokal (client-side)
     const newSoalList = soalList.filter((soal) => soal.id !== id);
     setSoalList(newSoalList);
     setCurrentPage(Math.ceil(newSoalList.length / soalPerPage));
-  };
+
+    // Mengirim permintaan ke server untuk menghapus folder terkait (server-side)
+    const response = await fetch(`${ResourceLink}/delete-folder/${idPelajaran}/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      console.log('Folder dihapus di server.');
+    } else {
+      console.error('Gagal menghapus folder di server.', response);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 
 const goBack = () =>{
   window.location.href = '/';
@@ -232,16 +277,24 @@ const KirimSoal = async () => {
               />
             </div>
             <hr />
+            <div className="row">
+            <div className="col-10">
             <TextEditor value={soal.pertanyaan} onChange={(value) => {
               const newSoalList = [...soalList];
               newSoalList[((currentPage - 1) * soalPerPage) + soalIndex].pertanyaan = value;
               setSoalList(newSoalList);
             }} />
+            </div>
+            <div className="col d-flex justify-content-end align-items-center">
+            <ImageUploader action={ResourceLink + '/upload'} idPelajaran = {idPelajaran} noSoal={((currentPage - 1) * soalPerPage) + soalIndex + 1} fileName='question'/>
+            </div>
+            </div>
             <hr />
             <span>Pilihan Jawaban</span>
             <div>
               {soal.pilihan.map((pilihan, pilihanIndex) => (
-                <div className="border shadow-sm rounded-3 p-2 mt-3" key={pilihan.id}>
+                <div className="border shadow-sm rounded-3 p-2 mt-3 row" key={pilihan.id}>
+                  <div className="col-10">
                   <TextEditor
                     value={pilihan.text}
                     onChange={(value) => {
@@ -250,6 +303,10 @@ const KirimSoal = async () => {
                       setSoalList(newSoalList);
                     }}
                   />
+                  </div>
+                  <div className="col d-flex justify-content-end align-items-center">
+                  <ImageUploader action={ResourceLink + '/upload'} idPelajaran = {idPelajaran} noSoal={((currentPage - 1) * soalPerPage) + soalIndex + 1} fileName={'answer' + pilihanIndex}/>
+                  </div>
                 </div>
               ))}
             </div>
