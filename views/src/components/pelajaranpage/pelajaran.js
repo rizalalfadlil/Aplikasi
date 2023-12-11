@@ -203,7 +203,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
               {loading ? (
                 <Skeleton/>
               ) :(<div>
-                <Image width={500} src={`${ResourceLink}/download?filePath=/uploads/${idPelajaran}/${current + 1}/question.png`}/>
+                <ImageUrl width={500} src={`${ResourceLink}/download?filePath=/uploads/${idPelajaran}/${current + 1}/question.png`}/>
                 <p
                 className={`col danger-html pt-3 pb-3 fs-${fontSize}`}
                 dangerouslySetInnerHTML={{ __html: soalList[current].pertanyaan }}
@@ -218,6 +218,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
                     <AnswerOption
                       isEditMode={isEditMode}
                       no={pilihan.id}
+                      src={`${ResourceLink}/download?filePath=/uploads/${idPelajaran}/${current + 1}/answer${index}.png`}
                       fs={fontSize}
                       isi={pilihan.text}
                       key={index}
@@ -277,4 +278,13 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
       </div>
     </div>
   );
+}
+export const ImageUrl = (props) => {
+   const imgUrl = props.src;
+   const width = props.width;
+  return (
+    <>
+    {imgUrl ? ( <Image width={width} src={imgUrl}/> ) : 'tidak ada'}
+    </>
+  )
 }
