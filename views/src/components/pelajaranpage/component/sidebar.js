@@ -52,7 +52,7 @@ export const RightSidebar = (props) => {
         return doc.body.textContent || "";
       }
     return (
-      <div className={`col-3 col-xxl-2 gradient2 text-light text-start h100vh rsidebar fs-${fontSize}`}>
+      <div className={`gradient2 text-light text-start h100vh rsidebar fs-${fontSize}`}>
         <h5 className="p-4 mt-5 text-center">menu</h5>
         <div className=" p-5 pb-0 pt-0">
           <FontSizeChanger fontSize={fontSize} handleFontSizeChange={handleFontSizeChange} />

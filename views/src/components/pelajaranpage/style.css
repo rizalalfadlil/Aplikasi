@@ -1,6 +1,9 @@
 .rsidebar{
     z-index: 5;
     right: 0;
+    top: 0;
+    position: sticky;
+    height: 100vh;
 }
 input[type='radio']:checked+ .answer-button{
     background:linear-gradient(to right, rgb(0, 108, 196), #153ec5);

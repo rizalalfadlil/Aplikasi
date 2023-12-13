@@ -184,9 +184,9 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
   }
   return (
     <div className="appbg">
-      <div className="d-flex align-items-center text-end justify-content-end">
-        <div className="row w-100">
-          <div className="col p-5">
+      <div className="">
+        <div className="d-flex">
+          <div className="p-5 container-fluid">
             <div className="border row p-5 text-start rounded-5 text-bg-light">
               <div className="fs-5 col">
                 <p className="fs-6 badge fw-light mb-0 text-opacity-50 text-secondary">Nama Ujian</p>
@@ -198,7 +198,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
               <div className="col-3 col-lg-2">
               <Countdown title="waktu tersisa" value={deadline} onFinish={onFinish} />
               </div>
-              <button onClick={removeLocalStart}>remove start</button>
               <hr className="mt-4 mb-4" />
               {loading ? (
                 <Skeleton/>
@@ -279,12 +278,34 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
     </div>
   );
 }
+
+async function isImageAvailable(url) {
+  try {
+    const response = await fetch(url, { method: 'HEAD' });
+    return response.ok && response.headers.get('Content-Type').startsWith('image');
+  } catch (error) {
+    return false;
+  }
+}
+
 export const ImageUrl = (props) => {
-   const imgUrl = props.src;
-   const width = props.width;
+  const { src, width } = props;
+  const [isValidImage, setIsValidImage] = useState(false);
+
+  useEffect(() => {
+    const checkImageValidity = async () => {
+      if (src) {
+        const valid = await isImageAvailable(src);
+        setIsValidImage(valid);
+      }
+    };
+
+    checkImageValidity();
+  }, [src]);
+
   return (
     <>
-    {imgUrl ? ( <Image width={width} src={imgUrl}/> ) : 'tidak ada'}
+      {isValidImage ? <Image width={width} src={src} /> : null}
     </>
-  )
-}
+  );
+};

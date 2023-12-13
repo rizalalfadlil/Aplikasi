@@ -10,8 +10,9 @@ import dayjs from 'dayjs'
 dayjs.extend(customParseFormat);
 const showedFormat = 'DD-MM hh:mm';
 export const MainSiswa = () => {
-  localStorage.removeItem('deadline');
+  localStorage.removeItem('startTime');
   localStorage.removeItem('jawaban');
+
   const [examSessions, setExamSessions] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [open, setOpen] = useState(false);

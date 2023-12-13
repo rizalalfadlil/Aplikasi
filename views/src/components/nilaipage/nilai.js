@@ -123,7 +123,7 @@ const Soal = (props) => {
     };
   
     return (
-      <div className={`border border-2 bg-${correct ? 'success' : 'danger'} bg-opacity-10 rounded-5 border-opacity-50 border-${correct ? 'success' : 'danger'} mb-3 row`}>
+      <div className={`border shadow bg-${correct ? 'success' : 'danger'} bg-opacity-10 rounded-3 border-opacity-50 border-${correct ? 'success' : 'danger'} mb-3 row`}>
         <div className='col-10 p-4'>
             <span className='fw-bold text-primary'dangerouslySetInnerHTML={{ __html: props.soal }}/>
             <h3 className='fw-light mt-2' dangerouslySetInnerHTML={{ __html: props.jawaban }}/>  

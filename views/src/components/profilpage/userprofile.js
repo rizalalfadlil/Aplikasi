@@ -94,7 +94,7 @@ const UserProfile = () => {
           {answers.length !== 0?(
             <>
             {answers.map((answer, index) =>(
-            <div className='border my-2 rounded-pill row'>
+            <div className='border my-2 rounded-pill shadow-sm row'>
               <div className='border-end col-1 p-2 d-flex justify-content-center align-items-center'>{index + 1}</div>
               <div className='col-4 p-2 d-flex justify-content-center align-items-center border-end'>{answer.pelajaran}</div>
               <div className='col-2 d-none d-md-block p-2 text-center border-end'>{dayjs(answer.createdAt).format(showedFormat)}</div>
