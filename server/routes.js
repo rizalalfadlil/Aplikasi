@@ -7,7 +7,6 @@ const fse = require('fs-extra');
 const path = require('path');
 // Impor kontroler yang telah dibuat sebelumnya
 const userController = require('../contorllers/Users');
-const AnswerKeyController = require('../contorllers/AnswerKey');
 const fileController = require('../contorllers/fileController');
 const examSessionController = require('../contorllers/ExamSession');
 const subjectController = require('../contorllers/Subjects');
@@ -27,10 +26,6 @@ router.post('/api/exam-sessions', examSessionController.createExamSession);
 router.get('/api/exam-sessions', examSessionController.getExamSessions);
 router.put('/api/exam-sessions/:id', examSessionController.updateExamSession);
 router.delete('/api/exam-sessions/:id', examSessionController.deleteExamSession);
-
-router.post('/api/answer-key', AnswerKeyController.createAnswerKey);
-router.get('/api/answer-key/:id', AnswerKeyController.getAnswerKey);
-router.put('/api/answer-key/:id', AnswerKeyController.updateAnswerKey);
 
 // Rute untuk mata pelajaran (Subjects)
 router.post('/api/subjects', subjectController.createSubject);

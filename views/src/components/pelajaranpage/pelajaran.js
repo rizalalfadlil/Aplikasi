@@ -20,8 +20,6 @@ export function HalamanUjian() {
   const [namaUjian, setNamaUjian] = useState();
   const [done, setDone] = useState(false);
   const [deadline, setDeadline] = useState();
-  const dataUser = JSON.parse(localStorage.getItem('user'));
-  const modeBuatKunjaw = dataUser.role === 'guru';
 // Hitung jumlah soal yang telah dijawab
 const jumlahSoalDijawab = jawaban.filter(j => j !== 'x').length;
 
@@ -61,98 +59,19 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
        collectedJawaban.push(jawabanObject);
      }
 
+    const dataUser = JSON.parse(localStorage.getItem('user'));
     const dataJawaban = {
       username: dataUser.username,
       userId:dataUser.id,
       pelajaran:namaUjian,
       pelajaranId:idPelajaran,
       answer:collectedJawaban
+
     }
-    const dataKunjaw = {
-      pelajaranId:idPelajaran,
-      answer:collectedJawaban
-    }
-    
-    if(!modeBuatKunjaw)SendJawaban(dataJawaban);
-    else SendKunjaw(dataKunjaw);
+    console.log("Jawaban yang dikumpulkan:", dataJawaban);
+    SendJawaban(dataJawaban);
+
   };
-  const SendKunjaw = async (data) => {
-    try {
-      // Periksa apakah data dengan ID yang sama sudah ada di server
-      const existingData = await fetchDataWithId(data.pelajaranId);
-  
-      if (existingData) {
-        // Jika data sudah ada, gunakan metode PUT
-        await updateKunjaw(existingData.id, data);
-        message.success("Berhasil Mengirimkan Kunci Jawaban (Update)").then(() => goBack());
-        console.log('Kunci jawaban berhasil diupdate');
-      } else {
-        // Jika data belum ada, gunakan metode POST
-        await postKunjaw(data);
-        message.success("Berhasil Mengirimkan Kunci Jawaban (Create)").then(() => goBack());
-        console.log('Kunci jawaban berhasil dibuat');
-      }
-    } catch (error) {
-      console.error('Gagal mengirim kunci jawaban', error);
-      message.error("Gagal Mengirim Kunci Jawaban");
-    }
-  };
-  
-  // Fungsi untuk mengambil data dengan ID tertentu dari server
-  const fetchDataWithId = async (id) => {
-    try {
-      const response = await fetch(`${ResourceLink}/api/answer-key/${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        return data;
-      }
-      return null;
-    } catch (error) {
-      console.error('Gagal mengambil data dengan ID tertentu', error);
-      throw error;
-    }
-  };
-  
-  // Fungsi untuk mengirim data dengan metode POST
-  const postKunjaw = async (data) => {
-    try {
-      const response = await fetch(`${ResourceLink}/api/answer-key`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Gagal membuat kunci jawaban');
-      }
-    } catch (error) {
-      console.error('Gagal membuat kunci jawaban', error);
-      throw error;
-    }
-  };
-  
-  // Fungsi untuk mengirim data dengan metode PUT
-  const updateKunjaw = async (id, data) => {
-    try {
-      const response = await fetch(`${ResourceLink}/api/answer-key/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Gagal mengupdate kunci jawaban');
-      }
-    } catch (error) {
-      console.error('Gagal mengupdate kunci jawaban', error);
-      throw error;
-    }
-  };
-  
   const SendJawaban = async (data) => {
     console.log('data yang dikirimkan' + JSON.stringify(data));
     try {
@@ -169,9 +88,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
       console.error('Gagal mengirim jawaban', error);
     }
   };
-
   useEffect(() => {
-    message.info((modeBuatKunjaw?'mode guru':'mode siswa') + ' tipe user ' + dataUser.role);
     const subjectId = localStorage.getItem('idTugas');
     setIdPelajaran(subjectId);
     axios
@@ -279,7 +196,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
                 </div>
               </div>
               <div className="col-3 col-lg-2">
-              {modeBuatKunjaw?(<h5 className="text-center text-capitalize gradient1 text-light py-2 rounded-3">buat kunci jawaban</h5>):(<Countdown title="waktu tersisa" value={deadline} onFinish={onFinish} />)}
+              <Countdown title="waktu tersisa" value={deadline} onFinish={onFinish} />
               </div>
               <hr className="mt-4 mb-4" />
               {loading ? (
@@ -355,7 +272,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
             onChange={onChange}
             onSubmit={onFinish}
             done={done}
-            modeBuatKunjaw={modeBuatKunjaw}
           />
         </div>
       </div>

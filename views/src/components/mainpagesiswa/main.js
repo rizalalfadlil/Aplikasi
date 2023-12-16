@@ -140,7 +140,7 @@ export const MainSiswa = () => {
               judul={session.name}
             >
               {Array.isArray(subjects) && subjects.map((subject, index) => (
-                subject.examSessionId === session.id && (
+                subject.examSessionId === session.id ? (
                   <PelajaranTodo
                     key={index}
                     pelajaran={subject.name}
@@ -150,7 +150,7 @@ export const MainSiswa = () => {
                     showModal={showModal}
                     id={subject.id}
                   />
-                )
+                ) : (<Empty description='kosong'/>)
               ))}
             </Ujian>
           ))}
