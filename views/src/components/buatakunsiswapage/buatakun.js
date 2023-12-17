@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ResourceLink } from '../../config';
-import { Form, Input, Button, Radio, Select, message, Table, Modal } from 'antd';
+import { Form, Input, Button, Radio, Select, message, Table, Modal, Checkbox } from 'antd';
 import axios from 'axios';
 import Sidebar from '../mainpage/sidebar';
 const { confirm } = Modal;
@@ -9,6 +9,7 @@ const { Search } = Input;
 
 export const Buatakun = ({fetchAccounts}) => {
   const [form] = Form.useForm();
+  const [autoGenerate, setAutoGenerate] = useState(false); // State untuk checkbox
   const [selectedRole, setSelectedRole] = useState('siswa');
 
   const handleSubmit = async (values) => {
@@ -17,44 +18,90 @@ export const Buatakun = ({fetchAccounts}) => {
       console.log(response.data);
       fetchAccounts()
       message.success('Berhasil Membuat Akun');
+      
+      if(autoGenerate){
+        let { username } = values;
+        const isNumeric = /^\d+$/.test(username);
+        if(isNumeric){
+          form.setFieldsValue({
+            fullname: null,
+            username: (parseInt(username) + 1).toString(),
+            password: generatePassword(),
+          });
+        }else{
+          form.setFieldsValue({
+            fullname: null,
+            password: generatePassword(),
+          });
+        }
+      }else{
+        form.setFieldsValue({
+          fullname: null,
+          username: null,
+          password: null,
+          grade: null,
+          departement: null,
+        });
+      }
     } catch (error) {
       console.error(error);
       message.error('Gagal Membuat Akun : ' + error);
     }
   };
 
+  const generatePassword = () => {
+    // Logika untuk menghasilkan password
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const passwordLength = Math.floor(Math.random() * (8 - 5 + 1)) + 5; // Panjang password antara 5 dan 8 karakter
+    let password = '';
+    for (let i = 0; i < passwordLength; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      password += characters.charAt(randomIndex);
+    }
+    return password;
+  };
+
   const handleRoleChange = (e) => {
     setSelectedRole(e.target.value);
+    setAutoGenerate(false);
   };
 
   return (
     <div className=''>
         <h2 className='pb-5'>Buat Akun Baru</h2>
         <Form form={form} layout='vertical' onFinish={handleSubmit}>
-          <div className='row'>
-          <Form.Item name="username" label="Username" className='col-12 col-sm-6' rules={[{ required: true, message: 'Username wajib diisi' }]}>
-            <Input className='rounded-pill'/>
-          </Form.Item>
-          <Form.Item name="password" label="Password" className='col-12 col-sm-6' rules={[{ required: true, message: 'Password wajib diisi' }]}>
-            <Input.Password className='rounded-pill' />
-          </Form.Item>
-          </div>
-          <Form.Item name="role" label="Tipe" rules={[{ required: true, message: 'Tipe wajib diisi' }]}>
+        <Form.Item name="role" label="Tipe" rules={[{ required: true, message: 'Tipe wajib diisi' }]}>
             <Radio.Group onChange={handleRoleChange} value={selectedRole}>
               <Radio value="guru">Guru</Radio>
               <Radio value="siswa">Siswa</Radio>
             </Radio.Group>
           </Form.Item>
+        <Form.Item name="fullname" label="Nama Lengkap" rules={[{ required: true, message: 'Username wajib diisi' }]}>
+            <Input className='rounded-pill'/>
+          </Form.Item>
+        {selectedRole === 'siswa' && (
+          <Form.Item>
+          <Checkbox onChange={(e) => setAutoGenerate(e.target.checked)}>Isi Otomatis</Checkbox>
+        </Form.Item>
+        )}
+          <div className='row'>
+          <Form.Item name="username" label="Username" className='col-12 col-sm-6' rules={[{ required: true, message: 'Username wajib diisi' }]}>
+            <Input className='rounded-pill'/>
+          </Form.Item>
+          <Form.Item name="password" label="Password" className='col-12 col-sm-6' rules={[{ required: true, message: 'Password wajib diisi' }]}>
+            <Input className='rounded-pill' />
+          </Form.Item>
+          </div>
           {selectedRole === 'siswa' && (
             <div className='row'>
-              <Form.Item name="grade" label="Kelas" className='col-12 col-sm-6' rules={[{ required: true, message: 'Kelas wajib diisi' }]}>
+              <Form.Item name="grade" label="Kelas" className='col-12 col-sm-6'>
                 <Select className='rounded-pill border' bordered={false}>
                   <Option value="X">X</Option>
                   <Option value="XI">XI</Option>
                   <Option value="XII">XII</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name="department" label="Jurusan" className='col-12 col-sm-6' rules={[{ required: true, message: 'Jurusan wajib diisi' }]}>
+              <Form.Item name="department" label="Jurusan" className='col-12 col-sm-6'>
                 <Select className='rounded-pill border' bordered={false}>
                   <Option value="RPL">Rekayasa Perangkat Lunak</Option>
                   <Option value="TKJ">Teknik Komputer dan Jaringan</Option>
@@ -151,14 +198,14 @@ export const AccountTable = () => {
         key: 'role',
       },
       {
-        title: 'Kelas',
-        dataIndex: 'grade',
-        key: 'grade',
+        title: 'Nama Lengkap',
+        dataIndex: 'fullname',
+        key: 'fullname',
       },
       {
-        title: 'Jurusan',
-        dataIndex: 'department',
-        key: 'department',
+        title: 'password',
+        dataIndex: 'password',
+        key: 'password',
       },
       {
         title: 'Action',

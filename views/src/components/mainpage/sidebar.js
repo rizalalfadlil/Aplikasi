@@ -25,8 +25,8 @@ function Sidebar() {
 
     if (user) {
       const parsedUser = JSON.parse(user);
-        setUsername(parsedUser.username);
-        setUserId(parsedUser.id);
+        setUsername(parsedUser.fullname);
+        setUserId(parsedUser.username);
         setUserType(parsedUser.role);
     } else {
       message.error('Anda Belum Login!').then(() => goBack());
