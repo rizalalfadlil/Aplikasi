@@ -12,6 +12,18 @@ export const Buatakun = ({fetchAccounts}) => {
   const [autoGenerate, setAutoGenerate] = useState(false); // State untuk checkbox
   const [selectedRole, setSelectedRole] = useState('siswa');
 
+  
+  const [userType, setUserType] = useState('siswa');
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    const parsedUser = JSON.parse(user);
+    setUserType(parsedUser.role);
+
+    if(parsedUser.role !== 'guru'){
+      window.location.href = '/';
+    }
+  }, [userType]);
+
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post( ResourceLink + '/api/users', values);

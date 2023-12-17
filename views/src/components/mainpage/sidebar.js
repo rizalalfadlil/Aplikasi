@@ -12,6 +12,7 @@ function Sidebar() {
     };
   
   const [username, setUsername] = useState('Nama User');
+  const [userUsername, setuserUsername] = useState('username');
   const [userId, setUserId] = useState('id user');
   const [userType, setUserType] = useState('Tipe Akun');
 
@@ -26,12 +27,14 @@ function Sidebar() {
     if (user) {
       const parsedUser = JSON.parse(user);
         setUsername(parsedUser.fullname);
-        setUserId(parsedUser.username);
+        setuserUsername(parsedUser.username);
+        setUserId(parsedUser.id);
         setUserType(parsedUser.role);
     } else {
       message.error('Anda Belum Login!').then(() => goBack());
     }
   }, []);
+  
   const goBack = () =>{
     window.location.href = '/login';
   }
@@ -44,16 +47,23 @@ function Sidebar() {
       <div className='pt-4'>
         <div className={`w-100 text-center mt-5 text-nowrap opacity-${isSidebarOpen?'100':'0'}`}>
           <h2>{username}</h2>
-          <span>{userType} | {userId} </span>
+          <span>{userType} | {userUsername} </span>
         </div>
         <div className='list-group mt-5 bg-transparent text-start w-100 pt-5 p-2'>
         {userType === 'guru' ? (
           <>
           <SideMenu isSidebarOpen={isSidebarOpen} icon="home" title="Halaman Utama" link='/'/>
-          <SideMenu isSidebarOpen={isSidebarOpen} icon='user' title='Data User' link='/create-account'/>
+          <SideMenu isSidebarOpen={isSidebarOpen} icon='users' title='Data User' link='/create-account'/>
           <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='/login'/>
           </>
-        ) : <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='/login'/>}
+        ) : (
+        <>
+        <SideMenu isSidebarOpen={isSidebarOpen} icon="home" title="Halaman Ujian" link='/'/>
+        <SideMenu isSidebarOpen={isSidebarOpen} icon='user' title='Profil' link={`/user/${userId}`}/>
+        <SideMenu isSidebarOpen={isSidebarOpen} icon='sign-out' title='Log-out' link='/login'/>
+        </>
+        )
+        }
         </div>
       </div>
     </div>

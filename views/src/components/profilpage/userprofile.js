@@ -5,7 +5,7 @@ import axios from 'axios';
 import Sidebar from '../mainpage/sidebar.js';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { Empty } from 'antd';
+import { Empty, message } from 'antd';
 dayjs.extend(customParseFormat);
 const showedFormat = 'DD/MM/YYYY  hh:mm:ss';
 
@@ -15,6 +15,13 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [loadingAnswers, setLoadingAnswers] = useState(true);
   const [answers, setAnswers] = useState([]);
+  
+  const [userType, setUserType] = useState('siswa');
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    const parsedUser = JSON.parse(user);
+    setUserType(parsedUser.role);
+  }, [userType]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -104,7 +111,13 @@ const UserProfile = () => {
               )
               :
               (
-                <button className='col btn btn-outline-primary rounded-end-pill p-2 text-center' onClick={() => nilaiUjian(answer.id)}>Nilai Sekarang</button>
+                <>
+                {userType === 'guru'?(
+                  <button className='col btn btn-outline-primary rounded-end-pill p-2 text-center' onClick={() => nilaiUjian(answer.id)}>Nilai Sekarang</button>
+                ):(
+                  <button disabled className='col btn btn-outline-primary rounded-end-pill p-2 text-center'>Belum dinilai</button>
+                )}
+                </>
               )}
             </div>
           ))
