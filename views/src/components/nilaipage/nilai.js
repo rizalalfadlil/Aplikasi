@@ -97,7 +97,6 @@ export const Nilai = () => {
         
       <Sidebar/>
       <div className='container border mt-5 p-5 rounded-5'>
-      <button onClick={goBack}>tes</button>
         <h1 className='my-5'>Penilaian Ujian</h1>
         <div className='row'>
       <div className='my-3 col-6'>

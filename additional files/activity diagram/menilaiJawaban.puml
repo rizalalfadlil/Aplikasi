@@ -6,14 +6,18 @@ if "Guru belum login" then
   -->[false] "Login sebagai Guru"
 else
   -->[true] "Melihat Jawaban Siswa"
-  
   if "Jawaban sudah dinilai?" then
     -->[true] "Lihat Nilai"
   else
     -->[false] "Berikan Nilai"
+    if "Ada Kunci Jawaban?" then
+      -->[true] "Nilai Otomatis"
+      --> "Selesai"
+    else
+      -->[false] "Nilai Manual"
+    endif
   endif
-  
-  --> "Selesai"
+ --> "Selesai"
 endif
 
 @enduml

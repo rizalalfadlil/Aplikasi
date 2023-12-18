@@ -8,6 +8,7 @@ else
   -->[false] "Buat Soal Baru"
   --> "Tambah Pertanyaan"
   --> "Tambah Pilihan Jawaban"
+  --> "Buat Kunci Jawaban"
   --> "Selesai"
 endif
 

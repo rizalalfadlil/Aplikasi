@@ -2,9 +2,8 @@
 |User|
 start
 :Login;
-if (isAdmin?) then (yes)
-  :Tambah Pelajaran;
-else (no)
+if (isAdmin?) then (no)
+  
   :Pilih Pelajaran;
   :Buka Soal;
   while (Jawab Soal) is (belum selesai)
@@ -12,11 +11,24 @@ else (no)
   endwhile (selesai)
   :Kumpulkan Jawaban;
   :Lihat Hasil Ujian;
+  stop
+else (yes)
+  |Admin|
+  :Tambah Ujian;
+  |System|
+  :Simpan Ujian;
+  |Admin|
+  :Tambah Pelajaran;
+  |System|
+  :Simpan Pelajaran;
+  |Admin|
+  :Buat Kunci Jawaban;
+  |System|
+  :Simpan Kunci Jawaban;
+  |Admin|
+  stop
 endif
-stop
-|Admin|
-:Login;
-:Kelola Soal;
+
 |System|
 fork
   :Simpan Jawaban;

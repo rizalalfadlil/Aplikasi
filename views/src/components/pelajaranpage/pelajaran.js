@@ -194,7 +194,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
           setDeadline(Date.now() + 1000 * data.submissionDeadline * 60);
           localStorage.setItem('startTime', Date.now()); // Simpan waktu awal di localStorage
         }
-        console.log(localStorage.getItem('startTime') + ' vs ' + Date.now());
         if((submitTime) >= 0){
           setSubmitTime(data.submissionDeadline - 0.1);
         }else{
