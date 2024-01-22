@@ -1,10 +1,12 @@
-import React from "react";
+import React,{useState} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import { Popconfirm, message } from "antd";
 import { ResourceLink } from "../../../config";
+import { json } from "sequelize";
 
 export function Pelajaran(props) {
+  const [adaKunjaw, setAdaKunjaw] = useState(false);
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     const options = { weekday: 'long', hour: 'numeric', minute: 'numeric' };
@@ -21,6 +23,26 @@ const handleEdit = () =>{
 
   window.location.href = "/create-soal";
 }
+const buatKunjaw = async () =>{
+  localStorage.setItem('idTugas', props.id.toString());
+  const savedKunjaw = await fetchDataWithId(props.id);
+  console.log(JSON.parse(savedKunjaw));
+}
+// Fungsi untuk mengambil data dengan ID tertentu dari server
+const fetchDataWithId = async (id) => {
+  try {
+    const response = await fetch(`${ResourceLink}/api/answer-keys/${id}`);
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    }
+    return null;
+  } catch (error) {
+    console.error('Gagal mengambil data dengan ID tertentu', error);
+    throw error;
+  }
+};
+
   const handleDelete = async () => {
     try {
       // Mengirim permintaan DELETE ke server
@@ -51,7 +73,7 @@ const handleEdit = () =>{
   return (
     <div className='bg-light rounded-3 col-12 shadow-sm'>
       <div className='row h-100 d-flex align-items-center text-center'>
-        <b className='col-4 col-md-6 pt-2 pb-2'><h4>{props.judul}</h4></b>
+        <b className='col-4 col-md-5 pt-2 pb-2'><h4>{props.judul}</h4></b>
         <span className='col-1 pt-2 pb-2 d-none d-sm-flex'> {props.jumlahSoal} soal</span>
         <div className='col-2 d-none d-sm-flex'>
           <span>{formatDate(props.startTime)}</span>
@@ -65,7 +87,8 @@ const handleEdit = () =>{
           <i className='fa fa-trash larger-icon'/>
         </button>
         </Popconfirm>
-        <button onClick={handleEdit} className='col-4 col-sm btn rounded-end-3 btn-outline-primary h-100'>lihat <i className='fa fa-arrow-right'/></button>
+        <button onClick={buatKunjaw} className='col-4 col-sm btn btn-outline-primary h-100'>Jawaban<i className={`fa ms-2 fa-${adaKunjaw?'check':'exclamation'} text-${adaKunjaw?'success':'warning'}`}/></button>
+        <button onClick={handleEdit} className='col-sm btn rounded-end-3 btn-outline-primary h-100'>Soal<i className='fa ms-2 fa-arrow-right'/></button>
       </div>
     </div>
   );

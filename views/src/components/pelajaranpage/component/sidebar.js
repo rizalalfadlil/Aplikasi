@@ -7,10 +7,10 @@ const { Countdown } = Statistic;
 const gradient = { '0%': 'rgb(0, 108, 196)', '100%': '#153ec5' };
 export const RightSidebar = (props) => {
     const [waktuTungguTerlewati, setWaktuTungguterlewati] = useState(false);
-    const { fontSize, current, isEditMode, soalList, jawaban, done, onSubmit, toggleEditMode, handleFontSizeChange, onChange, handleJawabanChange, next, prev, persentaseProgres, submitTime, deadline, toggleStepVisibility, visibleSteps } = props;
+    const { fontSize, current, isEditMode, soalList, jawaban, done, onSubmit, toggleEditMode, handleFontSizeChange, onChange, handleJawabanChange, next, prev, persentaseProgres, submitTime, deadline, toggleStepVisibility, visibleSteps, modeBuatKunjaw } = props;
     const waitTime = deadline - (submitTime * 1000 * 60);
     useEffect(() => {
-      if ((waitTime - Date.now()) <= 0) {
+      if (((waitTime - Date.now()) <= 0) && !modeBuatKunjaw) {
         waktuTungguSelesai();
       }
     }, [waitTime]);
@@ -30,7 +30,7 @@ export const RightSidebar = (props) => {
                 <Progress percent={persentaseProgres.toFixed(1)} />
               </li>
             )}
-            {!waktuTungguTerlewati && (
+            {(!waktuTungguTerlewati && !modeBuatKunjaw) && (
               <li>
                 Tunggu hingga
                 <ConfigProvider
@@ -91,45 +91,55 @@ export const RightSidebar = (props) => {
           </ConfigProvider>
         </div>
         <div className="pt-4 d-flex align-items-center justify-content-center">
-        {waktuTungguTerlewati && persentaseProgres === 100?
-         (
-            <button
-            disabled={done}
-            className={`btn border border-light border-opacity-25 btn-outline-light p-2 rounded-pill w-50`}
-            onClick={() => {
-                Modal.confirm({
-                  title: 'Yakin ingin menyelesaikan sekarang?',
-                  content: 'Periksa kembali soal yang anda kerjakan, tindakan ini tidak bisa dikembalikan!',
-                  okText: 'submit',
-                  okButtonProps: ({className:'rounded-pill'}),
-                  cancelButtonProps:({className:'border rounded-pill m-2'}),
-                  onOk: onSubmit,
-                  centered:'true',
-                  cancelText: 'batal',
-                  footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                      <CancelBtn/>
-                      <OkBtn />
-                    </>
-                  ),
-                });
-              }}
-
-            >
-            Selesai
-            {done ? <LoadingOutlined className="ms-4"/> : <i className={`fa fa-check p-2`} />}
-            </button>
-        ):(
-            <Popover content={unlockSubmit} placement="right">
-            <button
-            className={`btn border border-secondary border-opacity-25 btn-secondary p-2 rounded-pill w-50`}
-            >
-            Selesai
-            <i className={`fa fa-lock p-2`} />
-            </button>
-            </Popover>
-        )
-        }
+        {modeBuatKunjaw?(
+          <button
+          disabled={done}
+          className={`btn border border-light border-opacity-25 btn-outline-light p-2 rounded-pill w-50`}
+          onClick={onSubmit}
+          >
+          Selesai
+          {done ? <LoadingOutlined className="ms-4"/> : <i className={`fa fa-check p-2`} />}
+          </button>
+        ):
+        waktuTungguTerlewati && persentaseProgres === 100?
+          (
+             <button
+             disabled={done}
+             className={`btn border border-light border-opacity-25 btn-outline-light p-2 rounded-pill w-50`}
+             onClick={() => {
+                 Modal.confirm({
+                   title: 'Yakin ingin menyelesaikan sekarang?',
+                   content: 'Periksa kembali soal yang anda kerjakan, tindakan ini tidak bisa dikembalikan!',
+                   okText: 'submit',
+                   okButtonProps: ({className:'rounded-pill'}),
+                   cancelButtonProps:({className:'border rounded-pill m-2'}),
+                   onOk: onSubmit,
+                   centered:'true',
+                   cancelText: 'batal',
+                   footer: (_, { OkBtn, CancelBtn }) => (
+                     <>
+                       <CancelBtn/>
+                       <OkBtn />
+                     </>
+                   ),
+                 });
+               }}
+ 
+             >
+             Selesai
+             {done ? <LoadingOutlined className="ms-4"/> : <i className={`fa fa-check p-2`} />}
+             </button>
+         ):(
+             <Popover content={unlockSubmit} placement="right">
+             <button
+             className={`btn border border-secondary border-opacity-25 btn-secondary p-2 rounded-pill w-50`}
+             >
+             Selesai
+             <i className={`fa fa-lock p-2`} />
+             </button>
+             </Popover>
+         )
+         }
         </div>
       </div>
     );
