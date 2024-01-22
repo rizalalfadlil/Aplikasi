@@ -91,7 +91,7 @@ const HalfScreenOverlay = () => {
   return (
     <div className={`half-screen-overlay d-none align-items-center text-white justify-content-center d-sm-flex shifted gradient1`}>
       <div>
-        <h1 className="mb-4">Aplikasi</h1>
+        <h1 className="mb-4">Modern Exam</h1>
       </div>
     </div>
   );
