@@ -3,7 +3,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import { Popconfirm, message } from "antd";
 import { ResourceLink } from "../../../config";
-import { json } from "sequelize";
 
 export function Pelajaran(props) {
   const [adaKunjaw, setAdaKunjaw] = useState(false);
@@ -24,17 +23,20 @@ const handleEdit = () =>{
   window.location.href = "/create-soal";
 }
 const buatKunjaw = async () =>{
-  localStorage.setItem('idTugas', props.id.toString());
   const savedKunjaw = await fetchDataWithId(props.id);
-  console.log(JSON.parse(savedKunjaw));
+  const parsedKunjaw = JSON.parse(savedKunjaw)
+  console.log(parsedKunjaw);
+  localStorage.setItem('idTugas', props.id.toString());
+  localStorage.setItem('jawaban', parsedKunjaw.answer);
+  window.location.href = "/pelajaran";
 }
 // Fungsi untuk mengambil data dengan ID tertentu dari server
 const fetchDataWithId = async (id) => {
   try {
-    const response = await fetch(`${ResourceLink}/api/answer-keys/${id}`);
+    const response = await fetch(`${ResourceLink}/api/answer-key/${id}`);
     if (response.ok) {
       const data = await response.json();
-      return data;
+      return JSON.stringify(data);
     }
     return null;
   } catch (error) {

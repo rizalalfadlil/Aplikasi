@@ -147,6 +147,10 @@ const hapusSoal = async (id) => {
 const goBack = () =>{
   window.location.href = '/';
 }
+const exportPelajaran = async () => {
+  const fileUrl =`${ResourceLink}/api/download-subjects/${idPelajaran}`;
+  KirimSoal().then(window.open(fileUrl, '_blank'));
+}
 const KirimSoal = async () => {
   if(judul && startTime){
     try {
@@ -335,6 +339,12 @@ const KirimSoal = async () => {
           >
             {isUpdate?'Perbarui':'Kirim'}
             {done && <LoadingOutlined className="ms-2"/>}
+        </button>
+        <button
+            className={`col-2 btn btn-${isConfirmed?'primary':'secondary'} rounded-pill`}
+            onClick={exportPelajaran}
+          >
+            Download
         </button>
         </div>
       </div>

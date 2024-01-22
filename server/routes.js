@@ -34,6 +34,8 @@ router.put('/api/answer-key/:id', AnswerKeyController.updateAnswerKey);
 
 // Rute untuk mata pelajaran (Subjects)
 router.post('/api/subjects', subjectController.createSubject);
+router.get('/api/download-subjects/:id', subjectController.downloadSubjectWithImagesAndJson);
+router.get('/api/download-images/:id', subjectController.downloadSubjectWithImages);
 router.get('/api/subjects', subjectController.getSubjects);
 router.get('/api/subjects/:id', subjectController.getSubjectById);
 router.put('/api/subjects/:id', subjectController.updateSubject);

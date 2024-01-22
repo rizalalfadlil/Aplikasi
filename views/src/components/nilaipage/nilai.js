@@ -1,3 +1,5 @@
+// bagaimana cara mengisi kunci jawaban otomatis di halaman ini, dengan mengambil dari ${ResourceLink}/api/answer-key/${idNIlai} di kolom answer, isinya sama seperti di jawaban siswa (contoh : [{"pertanyaan":"<p>apa arti dari <strong>run</strong></p>","jawaban":"<p>lari</p>"}])
+
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Sidebar from '../mainpage/sidebar';
@@ -7,40 +9,53 @@ import { Checkbox, message } from 'antd';
 export const Nilai = () => {
     const [loading, setLoading] = useState(true);
     const idNIlai = localStorage.getItem('nilai');
+    const [idUjian, setIdUjian] = useState(1);
     const [userData, setUserData] = useState([]);
     const [ujian, setUjian] = useState([]);
     const [score, setScore] = useState();
     const [done, setDone] = useState(false);
     const result = 100 * score/ujian.length;
-    
+    const [answerKey, setAnswerKey] = useState([]);
+    const [checkedItems, setCheckedItems] = useState({});
+
     useEffect(() => {
         const fetchUserData = async () => {
           try {
             const response = await axios.get(`${ResourceLink}/api/student-answers/${idNIlai}`);
-            console.log(response.data);
             const data = response.data
             setUserData({
                 username:data.username,
                 pelajaran:data.pelajaran,
                 id:data.userId,
+                ujianId:data.pelajaranId
             })
             const parsedUjian = await JSON.parse(data.answer);
+            setIdUjian(data.pelajaranId.toString())
             setUjian(parsedUjian);
-            console.log(parsedUjian);
-            console.log('user data : ', userData)
-            setLoading(false);
+            console.log('jawaban', parsedUjian);
+            fetchAnswerKey(data.pelajaranId.toString());
           } catch (error) {
             console.error(error);
+          }
+        };
+        const fetchAnswerKey = async (id) => {
+          try {
+            const response = await axios.get(`${ResourceLink}/api/answer-key/${id}`);
+            const data = response.data;
+            const parsedKunjaw = await JSON.parse(data.answer);
+            console.log('kunjaw', parsedKunjaw);
+            setAnswerKey(parsedKunjaw);
+            setLoading(false);
+          } catch (error) {
+            console.error('Error fetching answer key:', error);
             setLoading(false);
           }
         };
-    
-        
         fetchUserData();
+        setScore(ujian.length);
       }, [idNIlai]);
 
-
-      const [checkedItems, setCheckedItems] = useState({});
+      
 
   const handleCheckboxChange = (index, isChecked) => {
     setCheckedItems((prevItems) => ({ ...prevItems, [index]: isChecked }));
@@ -96,15 +111,20 @@ export const Nilai = () => {
       <hr className='border border-primary'/>
       </div>
       <div>
-      {ujian.map((ujian, index) => (
+      {loading? 'loading' : (
+        <>
+        {ujian.map((ujian, index) => (
             <Soal
               key={index}
               index={index}
               soal={ujian.pertanyaan}
               jawaban={ujian.jawaban}
+              answerKey={answerKey}
               onCheckboxChange={handleCheckboxChange}
             />
           ))}
+          </>
+      )}
       </div>
       <h5>Skor = {result.toFixed(1)}</h5>
       <button className='my-4 px-5 py-2 btn btn-outline-primary border-primary border rounded' onClick={isiNilai} disabled={done}>Nilai</button>
@@ -113,25 +133,36 @@ export const Nilai = () => {
   )
 }
 const Soal = (props) => {
-    const { index, soal, jawaban, onCheckboxChange } = props;
-    const [correct, setCorrect] = useState(false);
-  
-    const onChange = (e) => {
-      const isChecked = e.target.checked;
-      setCorrect(isChecked);
-      onCheckboxChange(index, isChecked);
-    };
-  
-    return (
-      <div className={`border shadow bg-${correct ? 'success' : 'danger'} bg-opacity-10 rounded-3 border-opacity-50 border-${correct ? 'success' : 'danger'} mb-3 row`}>
-        <div className='col-10 p-4'>
-            <span className='fw-bold text-primary'dangerouslySetInnerHTML={{ __html: props.soal }}/>
-            <h3 className='fw-light mt-2' dangerouslySetInnerHTML={{ __html: props.jawaban }}/>  
-            </div>
-        <div className='col d-flex justify-content-center align-items-center'>
-          <Checkbox style={{ scale: '2' }} checked={correct} onChange={onChange} />
-        </div>
-      </div>
-    );
+  const { index, soal, jawaban, onCheckboxChange, answerKey } = props;
+  const [correct, setCorrect] = useState(false);
+
+  const onChange = (e) => {
+    const isChecked = e.target.checked;
+    setCorrect(isChecked);
+    onCheckboxChange(index, isChecked);
   };
+
+  useEffect(() => {
+    // Memeriksa jawaban dan mengatur koreksi
+    const userAnswer = props.jawaban;
+    const correctAnswer = answerKey[index]?.jawaban;
+    const isChecked = userAnswer === correctAnswer;
+
+    setCorrect(isChecked);
+    onCheckboxChange(index, isChecked);
+  }, [props.jawaban, answerKey, index]);
+
+  return (
+    <div className={`border shadow rounded-3 border-opacity-50 border-${correct ? 'success' : 'danger'} mb-3 row`}>
+      <div className='col-10 p-4'>
+        <span className='fw-bold text-primary' dangerouslySetInnerHTML={{ __html: soal }} />
+        <h3 className='fw-light mt-2' dangerouslySetInnerHTML={{ __html: jawaban }} />
+      </div>
+      <div className='col d-flex justify-content-center align-items-center'>
+        <Checkbox style={{ scale: '2' }} checked={correct} onChange={onChange} />
+      </div>
+    </div>
+  );
+};
+
   

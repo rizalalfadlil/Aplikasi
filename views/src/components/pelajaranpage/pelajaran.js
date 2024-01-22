@@ -171,7 +171,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
   };
 
   useEffect(() => {
-    message.info((modeBuatKunjaw?'mode guru':'mode siswa') + ' tipe user ' + dataUser.role);
     const subjectId = localStorage.getItem('idTugas');
     setIdPelajaran(subjectId);
     axios
@@ -187,6 +186,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
         setSoalList(parsedQuestion);
         setJawaban(jawabanSementara);
         if (storedJawaban) {
+          console.log(storedJawaban);
           setJawaban(JSON.parse(storedJawaban));
         }
         if (storedStartTime) {
@@ -206,7 +206,7 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        message.error('soal ujian tidak ditemukan').then(() => goBack());
+        // message.error('soal ujian tidak ditemukan').then(() => goBack());
       });
   }, []);
 
@@ -254,17 +254,6 @@ const [visibleSteps, setVisibleSteps] = useState(Array(soalList.length).fill(fal
   const toggleEditMode = () => {
     setisEditMode(!isEditMode);
   };
-  const parsedPilihan = (pilihan) =>{
-    return JSON.parse(pilihan);
-  }
-  const getAnswerText = (answerId, pilihan) => {
-    const selectedAnswer = pilihan.find((pilihan) => pilihan.id === answerId);
-    return selectedAnswer ? selectedAnswer.text : '';
-  };
-  const removeLocalStart = () => {
-    localStorage.removeItem('startTime');
-    console.log('removed');
-  }
   return (
     <div className="appbg">
       <div className="">
