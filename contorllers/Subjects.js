@@ -31,7 +31,7 @@ async function downloadSubjectWithImagesAndJson(req, res) {
     zip.pipe(res);
 
     // Menambahkan folder dengan isinya ke dalam zip
-    const imageFolderPath = path.join(__dirname, '../server', 'uploads', `${subject.examSessionId}`);
+    const imageFolderPath = path.join(__dirname, '../server', 'uploads', `${subject.id}`);
     zip.directory(imageFolderPath, 'images');
 
     // Menambahkan file JSON ke dalam zip
@@ -40,12 +40,7 @@ async function downloadSubjectWithImagesAndJson(req, res) {
 
     // Menyusun data yang akan diunduh
     const dataToDownload = {
-      id: subject.id,
-      name: subject.name,
       questions: subject.questions,
-      submissionDeadline: subject.submissionDeadline,
-      startTime: subject.startTime,
-      examSession: subject.ExamSession,
     };
 
     // Menyimpan data sebagai file JSON sementara
@@ -65,92 +60,6 @@ async function downloadSubjectWithImagesAndJson(req, res) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Gagal mengunduh mata pelajaran dengan gambar dan file JSON.' });
-  }
-}
-
-
-// Fungsi untuk mengunduh satu pelajaran berdasarkan ID
-async function downloadSubject(req, res) {
-  const subjectId = req.params.id;
-
-  try {
-    const subject = await Subject.findByPk(subjectId, {
-      include: ExamSession,
-    });
-
-    if (!subject) {
-      return res.status(404).json({ error: 'Mata pelajaran tidak ditemukan.' });
-    }
-
-    // Menentukan nama file yang akan diunduh
-    const fileName = `subject_${subject.id}_${subject.name}.json`;
-
-    // Menyusun data yang akan diunduh
-    const dataToDownload = {
-      id: subject.id,
-      name: subject.name,
-      questions: subject.questions,
-      submissionDeadline: subject.submissionDeadline,
-      startTime: subject.startTime,
-      examSession: subject.ExamSession,
-    };
-
-    // Menentukan path untuk menyimpan file sementara
-    const filePath = path.join(__dirname, '../temp', fileName);
-
-    // Menyimpan data sebagai file JSON sementara
-    fs.writeFileSync(filePath, JSON.stringify(dataToDownload, null, 2));
-
-    // Mengirim file sebagai respons
-    res.download(filePath, fileName, () => {
-      // Setelah unduhan selesai, hapus file sementara
-      fs.unlinkSync(filePath);
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Gagal mengunduh mata pelajaran.' });
-  }
-}
-
-async function downloadSubjectWithImages(req, res) {
-  const subjectId = req.params.id;
-
-  try {
-    const subject = await Subject.findByPk(subjectId, {
-      include: ExamSession,
-    });
-
-    if (!subject) {
-      return res.status(404).json({ error: 'Mata pelajaran tidak ditemukan.' });
-    }
-
-    // Menentukan nama file zip
-    const zipFileName = `subject_${subject.id}_${subject.name}.zip`;
-
-    // Menentukan respons sebagai file zip
-    res.attachment(zipFileName);
-
-    // Membuat objek archiver
-    const zip = archiver('zip', {
-      zlib: { level: 9 }, // Compression level
-    });
-
-    // Mengaitkan respons dengan objek archiver
-    zip.pipe(res);
-
-    // Menambahkan folder dengan isinya ke dalam zip
-    const imageFolderPath = path.join(__dirname, '../server','uploads', `${subject.examSessionId}`);
-    zip.directory(imageFolderPath, 'images');
-
-    // Menambahkan file JSON ke dalam zip
-    const jsonFilePath = path.join(__dirname, '/file.json'); // Sesuaikan dengan path file JSON Anda
-    zip.file(jsonFilePath, { name: 'question.json' });
-
-    // Finalisasi zip dan kirim respons
-    zip.finalize();
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Gagal mengunduh mata pelajaran dengan gambar.' });
   }
 }
 // Operasi Create (C)
@@ -267,7 +176,5 @@ module.exports = {
   getSubjectById,
   updateSubject,
   deleteSubject,
-  downloadSubject,
-  downloadSubjectWithImages,
   downloadSubjectWithImagesAndJson
 };

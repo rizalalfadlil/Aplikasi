@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 // Operasi Create (C)
 async function createUser(req, res) {
   try {
-    const { username, password, role, grade, department } = req.body;
-    const newUser = await User.create({ username, password, role, grade, department });
+    const { username, password, role, grade, fullname, department } = req.body;
+    const newUser = await User.create({ username, password, role, grade, fullname, department });
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
@@ -43,7 +43,7 @@ async function getUser(req, res) {
 // Operasi Update (U)
 async function updateUser(req, res) {
   const userId = req.params.id;
-  const { username, password, role, grade, department } = req.body;
+  const { username, password, role, grade, fullname, department } = req.body;
 
   try {
     const user = await User.findByPk(userId);
@@ -52,6 +52,7 @@ async function updateUser(req, res) {
     }
 
     user.username = username;
+    user.fullname = fullname;
     user.password = password;
     user.role = role;
     user.grade = grade;
@@ -107,6 +108,7 @@ async function login(req, res) {
       data:{
         id:user.id,
         username:user.username,
+        fullname:user.fullname,
         role:user.role,
         grade:user.grade,
         department:user.department,

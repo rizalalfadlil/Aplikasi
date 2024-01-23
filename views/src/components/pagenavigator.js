@@ -21,7 +21,7 @@ export const Main = () => {
 
   return (
     <div>
-      {userType === 'guru' ? <MainPage /> : <MainSiswa />}
+      {userType === 'siswa' ? <MainSiswa /> : <MainPage />}
     </div>
   );
 };

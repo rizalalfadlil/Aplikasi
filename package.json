@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "adm-zip": "^0.5.10",
     "archiver": "^6.0.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",

@@ -105,6 +105,7 @@ export const MainSiswa = () => {
       >
         <h4>{infoUjian.pelajaran}</h4>
         <span>{infoUjian.waktu} Menit | {infoUjian.jumlahSoal} Soal</span><br/>
+        <span className='badge text-bg-primary rounded-0'>{infoUjian.kelas} </span><span className='badge text-bg-primary rounded-0 ms-1'> {infoUjian.jurusan}</span><br/>
           <div className='p-3 my-4 bg-secondary bg-opacity-10 rounded-3 border'>
           <p>Sebelum Anda memulai, kami memberikan beberapa petunjuk dan peraturan yang harus diikuti selama ujian. Mohon dibaca dengan seksama.</p>
           <ol>
@@ -138,6 +139,8 @@ export const MainSiswa = () => {
             <Ujian
               key={index}
               judul={session.name}
+              kelas={session.allowedGrades}
+              jurusan={session.allowedDepartments}
             >
               {Array.isArray(subjects) && subjects.map((subject, index) => (
                 subject.examSessionId === session.id && (
@@ -145,6 +148,8 @@ export const MainSiswa = () => {
                     key={index}
                     pelajaran={subject.name}
                     mulai={subject.startTime}
+                    kelas={session.allowedGrades}
+                    jurusan={session.allowedDepartments}
                     waktu={subject.submissionDeadline}
                     soal = {JSON.parse(subject.questions).length}
                     showModal={showModal}
@@ -160,14 +165,30 @@ export const MainSiswa = () => {
   )
 }
 export const Ujian = (props) => {
-  return (
+  const userData = localStorage.getItem('user');
+  const parsedUserData = JSON.parse(userData);
+  
+  const allowedGrades = props.kelas ? props.kelas.split(',') : [];
+  const allowedDepartments = props.jurusan ? props.jurusan.split(',') : [];
+
+  const kelas = parsedUserData.grade;
+  const jurusan = parsedUserData.department;
+
+  // Periksa apakah kelas atau jurusan pengguna termasuk dalam daftar yang diizinkan
+  const isGradeAllowed = allowedGrades.includes(kelas);
+  const isDepartmentAllowed = allowedDepartments.includes(jurusan);
+
+  // Tentukan apakah komponen harus ditampilkan atau disembunyikan
+  const shouldShowComponent = isGradeAllowed && isDepartmentAllowed;
+
+  return shouldShowComponent ? (
     <div className='border rounded-3 mt-5'>
-                <h3 className='p-3 rounded-top-3 gradient3r text-light'>{props.judul}</h3> 
-                <div className='p-4 row gx-3 gy-3'>
-                    {props.children}
-                </div>
-            </div>
-  )
+      <h3 className='p-3 rounded-top-3 gradient3r text-light'>{props.judul}</h3> 
+      <div className='p-4 row gx-3 gy-3'>
+        {props.children}
+      </div>
+    </div>
+  ) : null;
 }
 
 const PelajaranTodo = (props) => {
@@ -175,7 +196,9 @@ const PelajaranTodo = (props) => {
         pelajaran:props.pelajaran,
         waktu:props.waktu,
         jumlahSoal:props.soal,
-        id:props.id
+        id:props.id,
+        kelas:props.kelas,
+        jurusan: props.jurusan
     }
   return (
     <button className='col-12 text-start bg-transparent col-lg-6 col-xl-4' onClick={() => props.showModal(infoUjian)}>
