@@ -122,6 +122,8 @@ export const Buatakun = ({fetchAccounts}) => {
   );
 };
 export const AccountTable = () => {
+    const userData = localStorage.getItem('user');
+    const parsedUserData = JSON.parse(userData);
     const [accounts, setAccounts] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [filterRole, setFilterRole] = useState('');
@@ -226,8 +228,8 @@ export const AccountTable = () => {
       <div className='d-flex'>
         <Sidebar />
         <div className='border rounded-3 container my-5 p-5'>
-          <Buatakun fetchAccounts={fetchAccounts} />
-          <h1 className='py-5'>Daftar Akun</h1>
+          {parsedUserData.role === 'admin' && (<Buatakun fetchAccounts={fetchAccounts} />)}
+          <h1 className='py-5'>List Akun</h1>
           <div className='mb-3'>
             <Search
               placeholder='Cari berdasarkan username'

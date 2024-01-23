@@ -22,6 +22,14 @@ const ExamSession = sequelize.define('ExamSession', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  allowedGrades: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  allowedDepartments: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = ExamSession;

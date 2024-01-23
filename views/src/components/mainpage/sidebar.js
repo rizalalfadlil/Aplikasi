@@ -25,8 +25,8 @@ function Sidebar() {
 
     if (user) {
       const parsedUser = JSON.parse(user);
-        setUsername(parsedUser.username);
-        setUserId(parsedUser.id);
+      setUsername(parsedUser.fullname);
+      setUserId(parsedUser.username);
         setUserType(parsedUser.role);
     } else {
       message.error('Anda Belum Login!').then(() => goBack());
@@ -47,7 +47,7 @@ function Sidebar() {
           <span>{userType} | {userId} </span>
         </div>
         <div className='list-group mt-5 bg-transparent text-start w-100 pt-5 p-2'>
-        {userType === 'guru' ? (
+        {userType === 'admin' || userType === 'guru' ? (
           <>
           <SideMenu isSidebarOpen={isSidebarOpen} icon="home" title="Halaman Utama" link='/'/>
           <SideMenu isSidebarOpen={isSidebarOpen} icon='user' title='Data User' link='/create-account'/>

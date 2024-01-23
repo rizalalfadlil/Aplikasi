@@ -6,6 +6,9 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  fullname: {
+    type: DataTypes.STRING,
+  },
   password: {
     type: DataTypes.STRING,
     allowNull: false,

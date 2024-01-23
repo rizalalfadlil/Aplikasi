@@ -3,15 +3,23 @@ const { ExamSession } = require('../models'); // Pastikan Anda mengimpor model E
 // Operasi Create (C)
 async function createExamSession(req, res) {
   try {
-    const { name, startTime,  shuffleQuestions, strictMode, submissionDeadline, } = req.body;
-    const newSession = await ExamSession.create({ name, startTime,  shuffleQuestions, strictMode, submissionDeadline, });
+    const { name, startTime, shuffleQuestions, strictMode, submissionDeadline, allowedGrades, allowedDepartments } = req.body;
+    const newSession = await ExamSession.create({
+      name,
+      startTime,
+      shuffleQuestions,
+      strictMode,
+      submissionDeadline,
+      allowedGrades,
+      allowedDepartments,
+    });
+
     res.status(201).json(newSession);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Gagal membuat sesi ujian.' });
   }
 }
-
 // Operasi Read (R)
 async function getExamSessions(req, res) {
   try {
@@ -26,7 +34,7 @@ async function getExamSessions(req, res) {
 // Operasi Update (U)
 async function updateExamSession(req, res) {
   const sessionId = req.params.id;
-  const { name, startTime, shuffleQuestions, strictMode, submissionDeadline, } = req.body;
+  const { name, startTime, shuffleQuestions, strictMode, submissionDeadline, allowedGrades, allowedDepartments } = req.body;
 
   try {
     const session = await ExamSession.findByPk(sessionId);
@@ -39,6 +47,8 @@ async function updateExamSession(req, res) {
     session.shuffleQuestions = shuffleQuestions;
     session.strictMode = strictMode;
     session.submissionDeadline = submissionDeadline;
+    session.allowedGrades = allowedGrades;
+    session.allowedDepartments = allowedDepartments;
 
     await session.save();
     res.json(session);
@@ -47,7 +57,6 @@ async function updateExamSession(req, res) {
     res.status(500).json({ error: 'Gagal memperbarui sesi ujian.' });
   }
 }
-
 // Operasi Delete (D)
 async function deleteExamSession(req, res) {
   const sessionId = req.params.id;

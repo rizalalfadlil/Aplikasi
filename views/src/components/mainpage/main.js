@@ -110,6 +110,8 @@ const testUser = () =>{
               submissionDeadline={session.submissionDeadline}
               strictMode={session.strictMode}
               id={session.id}
+              allowedGrades={session.allowedGrades}
+              allowedDepartments={session.allowedDepartments}
               fetchExamSessions={fetchExamSessions}
             >
               {Array.isArray(subjects) && subjects.map((subject, index) => (
