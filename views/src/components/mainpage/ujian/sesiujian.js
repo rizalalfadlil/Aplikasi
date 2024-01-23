@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { DatePicker, Popconfirm, Switch, message, Dropdown, Modal } from 'antd';
+import { DatePicker, Popconfirm, Switch, message, Dropdown, Modal, Checkbox } from 'antd';
 import { MoreOutlined, SendOutlined } from '@ant-design/icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ResourceLink } from "../../../config";
@@ -18,8 +18,20 @@ export function SesiUjian(props){
     const [editedStrictMode, setEditedStrictMode] = useState(props.strictMode);
     const [editedStartTime, setEditedStartTime] = useState(dayjs(props.startTime)); // Gunakan null jika data awal adalah null atau set sesuai kebutuhan
     const [editedSubmissionDeadline, setEditedSubmissionDeadline] = useState(dayjs(props.submissionDeadline)); // Gunakan null jika data awal adalah null atau set sesuai kebutuhan
-
     const [isEdited, setIsEdited] =useState(false);
+    const [selectedKelas, setSelectedKelas] = useState(props.allowedGrades ? props.allowedGrades.split(',') : []);
+    const [selectedJurusan, setSelectedJurusan] = useState(props.allowedDepartments ? props.allowedDepartments.split(',') : []);    
+    const kelasOptions = ['X', 'XI', 'XII'];
+    const jurusanOptions = ['RPL', 'TKJ', 'TBSM', 'TKRO', 'TP'];
+  const handleKelasChange = (kelas) => {
+    setSelectedKelas(kelas);
+    console.log(selectedKelas);
+  };
+
+  const handleJurusanChange = (jurusan) => {
+    setSelectedJurusan(jurusan);
+    
+  };
     const toggleEdit = () =>{
       setIsEdited(!isEdited)
     }
@@ -46,6 +58,8 @@ export function SesiUjian(props){
               strictMode: editedStrictMode,
               startTime: editedStartTime,
               submissionDeadline: editedSubmissionDeadline,
+              allowedGrades: selectedKelas.toString(),
+              allowedDepartments: selectedJurusan.toString(),
               // Tambahkan properti lainnya yang diperlukan untuk update sesuai dengan kebutuhan Anda
             }),
           })
@@ -149,6 +163,15 @@ export function SesiUjian(props){
               }} 
               />
               </li>
+              <li className="mt-2">
+        <hr />
+        <b>Kelas</b>
+        <Checkbox.Group style={{ width: '100%' }} options={kelasOptions} value={selectedKelas} onChange={handleKelasChange}/>
+      </li>
+      <li>
+        <b>Jurusan</b>
+        <Checkbox.Group style={{ width: '100%' }} options={jurusanOptions} value={selectedJurusan} onChange={handleJurusanChange}/>
+      </li>
               </>
               )
               :

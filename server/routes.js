@@ -5,6 +5,8 @@ const fsp = require('fs/promises');
 const fs = require('fs');
 const fse = require('fs-extra');
 const path = require('path');
+const archiver = require('archiver');
+const AdmZip = require('adm-zip');
 // Impor kontroler yang telah dibuat sebelumnya
 const userController = require('../contorllers/Users');
 const AnswerKeyController = require('../contorllers/AnswerKey');
@@ -35,7 +37,6 @@ router.put('/api/answer-key/:id', AnswerKeyController.updateAnswerKey);
 // Rute untuk mata pelajaran (Subjects)
 router.post('/api/subjects', subjectController.createSubject);
 router.get('/api/download-subjects/:id', subjectController.downloadSubjectWithImagesAndJson);
-router.get('/api/download-images/:id', subjectController.downloadSubjectWithImages);
 router.get('/api/subjects', subjectController.getSubjects);
 router.get('/api/subjects/:id', subjectController.getSubjectById);
 router.put('/api/subjects/:id', subjectController.updateSubject);
@@ -75,7 +76,76 @@ router.get('/api/contoh-soal', (req, res) => {
   });
   
   const upload = multer({ storage });
-  
+  const storages = multer.memoryStorage();
+  const uploads = multer({ storage: storages });
+  // Endpoint untuk mengunggah file zip
+router.post('/upload-zip/:id', uploads.single('zipFile'), async (req, res) => {
+  const id = req.params.id;
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'File zip tidak ditemukan.' });
+    }
+
+    // Membaca konten file zip yang diunggah
+    const zipBuffer = req.file.buffer;
+
+    // Menentukan folder tempat menyimpan file zip sementara
+    const tempZipPath = path.join(__dirname, '../temp', 'tempZip.zip');
+
+    // Menyimpan konten zip ke file sementara
+    fs.writeFileSync(tempZipPath, zipBuffer);
+
+    // Menentukan folder untuk mengekstrak zip
+    const extractFolderPath = path.join(__dirname, '/uploads');
+
+    // Membaca file zip dan mengekstraknya ke dalam folder uploads
+    await extractZip(tempZipPath, extractFolderPath, id);
+
+    // Hapus file zip sementara
+    fs.unlinkSync(tempZipPath);
+
+    res.status(200).json({ success: true, message: 'File zip berhasil diunggah dan diekstrak.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Gagal mengunggah dan mengekstrak file zip.' });
+  }
+});
+
+async function extractZip(zipPath, extractPath, idPelajaran) {
+  return new Promise((resolve, reject) => {
+    const zip = new AdmZip(zipPath);
+
+    try {
+      zip.extractAllTo(extractPath, true);
+
+      // Hapus file question.json
+      const questionJsonPath = `${extractPath}/question.json`;
+      if (fs.existsSync(questionJsonPath)) {
+        fs.unlinkSync(questionJsonPath);
+        console.log('File question.json dihapus.');
+      }
+
+      // Ubah nama folder images
+      const imagesFolderPath = `${extractPath}/images`;
+      if (fs.existsSync(imagesFolderPath)) {
+        const newImagesFolderPath = `${extractPath}/${idPelajaran}`;
+
+        // Hapus folder lama jika sudah ada yang memiliki nama yang sama
+        if (fs.existsSync(newImagesFolderPath)) {
+          fs.rmdirSync(newImagesFolderPath, { recursive: true });
+          console.log('Folder lama dihapus.');
+        }
+
+        fs.renameSync(imagesFolderPath, newImagesFolderPath);
+        console.log('Folder images diubah menjadi new_images_folder.');
+      }
+
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
   // Endpoint untuk upload file
   router.post('/upload', upload.single('file'), (req, res) => {
     res.send('File berhasil diupload');

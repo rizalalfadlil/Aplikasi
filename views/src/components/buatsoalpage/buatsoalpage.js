@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { DatePicker, Popconfirm, message, Pagination, InputNumber} from "antd";
-import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
+import { DatePicker, Popconfirm, message, Pagination, InputNumber, Upload, Button, Tooltip} from "antd";
+import { UploadOutlined, PlusOutlined, DownloadOutlined } from "@ant-design/icons";
 import { LoadingOutlined } from "@ant-design/icons";
 import TextEditor from "./texteditor";
+import JSZip from 'jszip';
 import Sidebar from "../mainpage/sidebar";
 import axios from "axios";
 import { ResourceLink } from "../../config";
@@ -15,7 +16,7 @@ export const BuatSoal = () => {
   const [jumlahPilihan, setJumlahPilihan] = useState(4);
   const [judul, setJudul] = useState(null);
   const [idUjian, setIdUjian] = useState(0);
-  const [idPelajaran, setIdPelajaran] = useState(null);
+  const [idPelajaran, setIdPelajaran] = useState(0);
   const [namaUjian, setNamaUjian] = useState('????');
   const [startTime, setStartTime] = useState(null);
   const [isUpdate, setisUpdate] = useState(false);
@@ -28,6 +29,50 @@ export const BuatSoal = () => {
   const startIndex = (currentPage - 1) * soalPerPage;
   const endIndex = startIndex + soalPerPage;
   const displayedSoal = soalList.slice(startIndex, endIndex);
+
+  const customRequest = async ({ file, onSuccess, onError }) => {
+    try {
+      const formData = new FormData();
+      formData.append('zipFile', file);
+
+      // Kirim file zip ke server
+      const response = await axios.post(ResourceLink + '/upload-zip/' + idPelajaran, formData);
+      console.log(response);
+      const jsonFile = await extractJsonFromZip(file);
+      const parsedSoalList = JSON.parse(jsonFile);
+      const parsedPilihan = JSON.parse(parsedSoalList.questions);
+      setSoalList(parsedPilihan);
+      setJumlahPilihan(parsedPilihan[0].pilihan.length);
+      confirm();
+      onSuccess();
+      message.success('File diunggah dan diproses dengan sukses!');
+    } catch (error) {
+      console.error('Error processing zip file:', error);
+      onError(error);
+      message.error('Terjadi kesalahan saat memproses file.');
+    }
+  };
+
+  const extractJsonFromZip = async (zipFile) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = async (event) => {
+        const zip = new JSZip();
+        const zipContent = await zip.loadAsync(event.target.result);
+
+        // Replace 'yourFile.json' with the actual file name in the zip
+        const jsonContent = await zipContent.file('question.json').async('string');
+        resolve(jsonContent);
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+
+      reader.readAsArrayBuffer(zipFile);
+    });
+  };
   useEffect(() => {
     const fetchData = async () => {
       const soal = localStorage.getItem('soal');
@@ -267,6 +312,16 @@ const KirimSoal = async () => {
                     )}
                     </div>
                 </div>
+                <div className="col-2 mt-3">
+                <span className="p-2">Import Soal</span>
+                <Upload
+                  customRequest={customRequest}
+                  showUploadList={false}
+                  action={`${ResourceLink}/upload-zip`}
+                >
+                  <Button type="primary" className="rounded-pill" icon={<UploadOutlined />}>Upload Soal</Button>
+                </Upload>
+                </div>
                 <div className="mt-2 col-12"><hr/></div>
             </div>
       </div>
@@ -340,12 +395,15 @@ const KirimSoal = async () => {
             {isUpdate?'Perbarui':'Kirim'}
             {done && <LoadingOutlined className="ms-2"/>}
         </button>
+        <Tooltip title='Export soal ke file zip'>
         <button
             className={`col-2 btn btn-${isConfirmed?'primary':'secondary'} rounded-pill`}
             onClick={exportPelajaran}
+            disabled={judul === null || startTime === null}
           >
-            Download
+            Download <DownloadOutlined className="ms-2"/>
         </button>
+        </Tooltip>
         </div>
       </div>
     </div>

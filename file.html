@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+</head>
+<body>
+  <form id="uploadForm">
+    <label for="file">Pilih file:</label>
+    <input type="file" id="file" name="zipFile" accept=".zip">
+    <button type="button" onclick="uploadFile()">Upload</button>
+  </form>
+
+  <script>
+    function uploadFile() {
+      const fileInput = document.getElementById('file');
+      const file = fileInput.files[0];
+
+      const formData = new FormData();
+      formData.append('zipFile', file);
+
+      fetch('http://localhost:8000/upload-zip', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        // Handle the response, show success message, etc.
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle errors, show error message, etc.
+      });
+    }
+  </script>
+</body>
+</html>
